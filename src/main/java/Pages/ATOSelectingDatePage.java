@@ -1,5 +1,8 @@
 package Pages;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -13,8 +16,12 @@ public class ATOSelectingDatePage extends MainClass{
 
 	@FindBy(xpath="//select[@id='dd-atoo-cch-time-period-001']")
 	private WebElement dateSelection;
-	@FindBy(xpath="//option[contains(text(),'Last 24 hours')]")
-	private WebElement last24Hours;
+	@FindBy(xpath="//option[contains(text(),'Choose dates')]")
+	private WebElement chooseDates;
+	@FindBy(xpath="//input[@id='dp-atoo-cch-from-001']")
+	private WebElement from;
+	@FindBy(xpath="//input[@id='dp-atoo-cch-to-001']")
+	private WebElement to;
 	@FindBy(xpath="//label[contains(text(),'SMS')]")
 	private WebElement sms;
 	@FindBy(xpath="//button[contains(text(),'Search')]")
@@ -23,7 +30,10 @@ public class ATOSelectingDatePage extends MainClass{
 	private WebElement resultPerPage;
 	@FindBy(xpath="//option[contains(text(),'100')]")
 	private WebElement pages100;
-	//option[contains(text(),'100')]
+    LocalDate currentDate = LocalDate.now();
+    LocalDate previousDate = currentDate.minusDays(1);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    String formattedDate = previousDate.format(formatter);
 	
 	public ATOSelectingDatePage(){
 		PageFactory.initElements(DriverManager.getDriver(), this); 
@@ -33,8 +43,12 @@ public class ATOSelectingDatePage extends MainClass{
 		dateSelection.click();
 	}
 	public void selectDate() {
-		wait.until(ExpectedConditions.elementToBeClickable(last24Hours));
-		last24Hours.click();
+		wait.until(ExpectedConditions.elementToBeClickable(chooseDates));
+		chooseDates.click();
+		wait.until(ExpectedConditions.elementToBeClickable(from));
+		from.sendKeys(formattedDate);
+		wait.until(ExpectedConditions.elementToBeClickable(to));
+		to.sendKeys(formattedDate);
 	}
 	public void clickSMS() {
 		wait.until(ExpectedConditions.elementToBeClickable(sms));

@@ -1,7 +1,6 @@
 package Pages;
 
 import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -10,7 +9,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import com.asis.util.ClientExcel;
 import com.asis.util.MainClass;
-
 import Driver_manager.DriverManager;
 
 public class XeroSearchClientPage extends MainClass {
@@ -70,7 +68,7 @@ public class XeroSearchClientPage extends MainClass {
 						try {
 							wait.until(ExpectedConditions.visibilityOf(clientEmail2));
 						} catch (Exception e2) {
-							System.out.println("Both clientEmail and clientEmail2 are not visible. " +client);
+							System.out.println("Both clientEmail and clientEmail2 are not visible. " + client);
 						}
 					}
 					wait.until(ExpectedConditions.visibilityOf(clientCode));
@@ -91,17 +89,17 @@ public class XeroSearchClientPage extends MainClass {
 					if (clientCode.isDisplayed()) {
 						clientCodeText = clientCode.getText().trim();
 					}
-
 					if (emailText != null && clientCodeText != null) {
 						System.out.println("Extracted Email: " + emailText);
 						System.out.println("Extracted Client Code: " + clientCodeText);
-						clientEmails.add(emailText);
-	                    clientCodes.add(clientCodeText);
+
+
+						ClientExcel.addClientData(clientCodeText, emailText);
+						ClientExcel.saveExcelFile();
 					} else {
-						System.out.println("Client Code not found for client: " + client);
+						System.out.println("Client Code or Email not found for client: " + client);
 					}
-				}
-				else {
+				} else {
 					System.out.println("Client name not found: " + client);
 					Thread.sleep(3000);
 					wait.until(ExpectedConditions.elementToBeClickable(searchButton));
@@ -112,8 +110,10 @@ public class XeroSearchClientPage extends MainClass {
 				System.out.println("Error occurred while searching for client: " + client);
 				e.printStackTrace();
 			}
-
 		}
+
+		//        ClientExcel.saveExcelFile();
+
 		System.out.println(clientEmails);
 		System.out.println(clientCodes);
 	}
