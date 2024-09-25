@@ -2,6 +2,7 @@ package com.asis.util;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -14,9 +15,12 @@ public class MainClass {
 
 	static ClientExcel clientExcel = new ClientExcel();
 	static String filePath = "ClientData.xls"; 
+	
 	public static ArrayList<String> firstColumn = ClientExcel.readFirstColumn(filePath);
 	public static ArrayList<String> clientNames = new ArrayList<>();
-
+	public static List<String> clientCodes = new ArrayList<>();
+	public static List<String> clientEmails = new ArrayList<>();
+	
 	public static String ATO_USER_NAME="";
 	public static String USERNAME="";
 	public static String SENDER_TO="";

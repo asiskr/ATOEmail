@@ -95,6 +95,8 @@ public class XeroSearchClientPage extends MainClass {
 					if (emailText != null && clientCodeText != null) {
 						System.out.println("Extracted Email: " + emailText);
 						System.out.println("Extracted Client Code: " + clientCodeText);
+						clientEmails.add(emailText);
+	                    clientCodes.add(clientCodeText);
 					} else {
 						System.out.println("Client Code not found for client: " + client);
 					}
@@ -112,5 +114,7 @@ public class XeroSearchClientPage extends MainClass {
 			}
 
 		}
+		System.out.println(clientEmails);
+		System.out.println(clientCodes);
 	}
 }
