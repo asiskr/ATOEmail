@@ -1,4 +1,5 @@
 
+
 package com.asis.util;
 import java.io.File;
 import java.io.FileInputStream;
@@ -68,7 +69,7 @@ public class ClientExcel extends MainClass{
 		for (int cnt = 0; cnt < firstColumn.size(); cnt++) {
 			String clientName = firstColumn.get(cnt).trim(); 
 
-			if (cnt > 1) {
+			if (cnt > 0) {
 				int length = clientName.length();
 				if (length > 2 && clientName.charAt(length - 2) == ' ' 
 						&& Character.isLetter(clientName.charAt(length - 1))) {
