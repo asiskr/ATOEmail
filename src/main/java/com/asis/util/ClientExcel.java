@@ -16,7 +16,7 @@ public class ClientExcel extends MainClass{
 	private static int currentRowNum = 1;
 
 	/*====================Creation of Empty Excel Sheet===================================*/
-	
+
 	public static void createEmptyExcelSheet() {
 		workbook = new HSSFWorkbook();
 		sheet = workbook.createSheet("Client Data");
@@ -29,116 +29,7 @@ public class ClientExcel extends MainClass{
 			cell.setCellValue(headers[i]); 
 		}
 	}
-	
-	/*====================Table Extraction and Putting data into Excel===================================*/
-	
-	public static ArrayList<ArrayList<String>> writeDataToExcel(ArrayList<ArrayList<String>> data) {
-		if (sheet == null) {
-			return data;
-		}
-		int rowNum = 1;
-		for (ArrayList<String> rowData : data) {
-			Row row = sheet.createRow(rowNum++);
-			int colNum = 0;
-			for (String cellData : rowData) {
-				Cell cell = row.createCell(colNum++);
-				cell.setCellValue(cellData);
-			}
-		}
-		return data;
-	}
 
-	/*====================Read Of First Column===================================*/
-	
-	public static ArrayList<String> readFirstColumn(String filePath) {
-		ArrayList<String> firstColumnData = new ArrayList<>();
-
-		try (FileInputStream fis = new FileInputStream(new File(filePath));
-				Workbook workbook = WorkbookFactory.create(fis)) {
-
-			Sheet sheet = workbook.getSheetAt(0);
-			for (Row row : sheet) {
-				Cell cell = row.getCell(0); 
-				if (cell != null && cell.getCellType() == CellType.STRING) {
-					firstColumnData.add(cell.getStringCellValue());
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return firstColumnData;
-	} 
-	
-	/*====================Removal of Last character of client name ===================================*/
-	
-	public static void clientNamesRemoval() {
-		String filePath = "ClientData.xls"; 
-		ArrayList<String> firstColumn = readFirstColumn(filePath); 
-
-		for (int cnt = 0; cnt < firstColumn.size(); cnt++) {
-			String clientName = firstColumn.get(cnt).trim(); 
-
-			if (cnt > 0) {
-				int length = clientName.length();
-				if (length > 2 && clientName.charAt(length - 2) == ' ' 
-						&& Character.isLetter(clientName.charAt(length - 1))) {
-					clientName = clientName.substring(0, length - 2);
-				}
-
-				// Format the name if it contains a comma
-				clientName = formatCommaSeparatedName(clientName);
-				clientName = capitalizeName(clientName);
-				//	            System.out.println(clientName);
-				clientNames.add(clientName); 
-			}
-		}
-	}
-	
-	/*====================Formating of the client name data===================================*/
-	
-	private static String formatCommaSeparatedName(String name) {
-		if (name.contains(",")) {
-			// Replace ",<no space>" with ", "
-			name = name.replaceAll(",(\\S)", ", $1");
-		}
-		return name;
-	}
-	
-	/*====================Changing the client name into capital form===================================*/
-
-	private static String capitalizeName(String name) {
-		if (name == null || name.isEmpty()) {
-			return name; 
-		}
-		String[] words = name.split(" ");
-		StringBuilder capitalized = new StringBuilder();
-		for (String word : words) {
-			if (!word.isEmpty()) {
-				String capitalizedWord = word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
-				capitalized.append(capitalizedWord).append(" ");
-			}
-		}
-		return capitalized.toString().trim();
-	}
-
-	/*====================Adding the client code and email into excel sheet===================================*/
-	
-	public static void addClientData(String clientCode, String clientEmail) {
-		if (sheet != null) {
-			Row row = sheet.getRow(currentRowNum);
-			if (row == null) {
-				row = sheet.createRow(currentRowNum);
-			}
-
-			Cell codeCell = row.createCell(5); 
-			Cell emailCell = row.createCell(6); 
-			codeCell.setCellValue(clientCode); 
-			emailCell.setCellValue(clientEmail); 
-
-			currentRowNum++; 
-		}
-	}
-	
 	/*====================Saving the Excel===================================*/
 
 	public static void saveExcelFile() {
@@ -158,24 +49,141 @@ public class ClientExcel extends MainClass{
 		}
 	}
 	
-	/*====================Writing the Combined data of client name and client code into column of excel===================================*/
-	
-	public static void writeCombinedDataToExcel(String clientName, String clientCode) {
-	       
-        Row row = sheet.createRow(1);
-        String combinedData = clientName + " - " + clientCode;
+	/*====================Table Extraction and Putting data into Excel===================================*/
 
-        Cell combinedCell = row.createCell(7); // Column index for G is 6
-        combinedCell.setCellValue(combinedData);
-        saveExcelFile();
-        System.out.println("dasdas");
+	public static ArrayList<ArrayList<String>> writeDataToExcel(ArrayList<ArrayList<String>> data) {
+		if (sheet == null) {
+			return data;
+		}
+		int rowNum = 1;
+		for (ArrayList<String> rowData : data) {
+			Row row = sheet.createRow(rowNum++);
+			int colNum = 0;
+			for (String cellData : rowData) {
+				Cell cell = row.createCell(colNum++);
+				cell.setCellValue(cellData);
+			}
+		}
+		return data;
 	}
-	
-	/*====================Main Method===================================*/
-	
+
+	/*====================Read Of First Column===================================*/
+
+	public static ArrayList<String> readFirstColumn(String filePath) {
+		ArrayList<String> firstColumnData = new ArrayList<>();
+
+		try (FileInputStream fis = new FileInputStream(new File(filePath));
+				Workbook workbook = WorkbookFactory.create(fis)) {
+
+			Sheet sheet = workbook.getSheetAt(0);
+			for (Row row : sheet) {
+				Cell cell = row.getCell(0); 
+				if (cell != null && cell.getCellType() == CellType.STRING) {
+					firstColumnData.add(cell.getStringCellValue());
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		saveExcelFile();
+		return firstColumnData;
+		
+	} 
+
+	/*====================Removal of Last character of client name ===================================*/
+
+	public static void clientNamesRemoval() {
+		String filePath = "ClientData.xls"; 
+		ArrayList<String> firstColumn = readFirstColumn(filePath); 
+		System.out.println(firstColumn.size());
+
+		for (int cnt = 0; cnt < firstColumn.size(); cnt++) {
+			String clientName = firstColumn.get(cnt).trim(); 
+
+			if (cnt > 0) {
+				System.out.println(clientName);
+				int length = clientName.length();
+				if (length > 2 && clientName.charAt(length - 2) == ' ' 
+						&& Character.isLetter(clientName.charAt(length - 1))) {
+					clientName = clientName.substring(0, length - 2);
+				}
+
+				// Format the name if it contains a comma
+				clientName = formatCommaSeparatedName(clientName);
+				clientName = capitalizeName(clientName);
+				//	            System.out.println(clientName);
+				clientNames.add(clientName); 
+			}
+		}
+		System.out.println(clientNames);
+	}
+
+	/*====================Formating of the client name data===================================*/
+
+	private static String formatCommaSeparatedName(String name) {
+		if (name.contains(",")) {
+			// Replace ",<no space>" with ", "
+			name = name.replaceAll(",(\\S)", ", $1");
+		}
+		return name;
+	}
+
+	/*====================Changing the client name into capital form===================================*/
+
+	private static String capitalizeName(String name) {
+		if (name == null || name.isEmpty()) {
+			return name; 
+		}
+		String[] words = name.split(" ");
+		StringBuilder capitalized = new StringBuilder();
+		for (String word : words) {
+			if (!word.isEmpty()) {
+				String capitalizedWord = word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+				capitalized.append(capitalizedWord).append(" ");
+			}
+		}
+		return capitalized.toString().trim();
+	}
+
+	/*====================Adding the client code and email into excel sheet===================================*/
+
+	public static void addClientData(String clientCode, String clientEmail) {
+		if (sheet != null) {
+			Row row = sheet.getRow(currentRowNum);
+			if (row == null) {
+				row = sheet.createRow(currentRowNum);
+			}
+
+			Cell codeCell = row.createCell(5); 
+			Cell emailCell = row.createCell(6); 
+			codeCell.setCellValue(clientCode); 
+			emailCell.setCellValue(clientEmail); 
+
+			currentRowNum++; 
+		}
+	}
+
+	/*====================Writing the Combined data of client name and client code into column of excel===================================*/
+
+	public static void writeCombinedDataToExcel(String clientName, String clientCode) {
+
+		Row row = sheet.createRow(1);
+		String combinedData = clientName + " - " + clientCode;
+
+		Cell combinedCell = row.createCell(7); // Column index for G is 6
+		combinedCell.setCellValue(combinedData);
+		saveExcelFile();
+		System.out.println("dasdas");
+	}
+
+
+/*====================Main Method===================================*/
+
 	public static void main(String[] args) {
+		clientNamesRemoval();
 		createEmptyExcelSheet();
         writeCombinedDataToExcel("Alice", "12345");
         writeCombinedDataToExcel("Bob", "67890"); 
     }
 }
+ 

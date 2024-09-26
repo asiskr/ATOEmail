@@ -69,8 +69,8 @@ public class ATOcommHistoryExtarctionPage extends MainClass {
 		}
 		System.out.println(ACTIVITY_STATEMENT_DATA);
 		ClientExcel.writeDataToExcel(ACTIVITY_STATEMENT_DATA);
+		ClientExcel.saveExcelFile();
 		return ACTIVITY_STATEMENT_DATA;
-//		ClientExcel.saveExcelFile();
 	}
 	public void closeBrowser() {
 		DriverManager.getDriver().quit();
