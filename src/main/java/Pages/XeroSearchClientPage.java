@@ -40,7 +40,7 @@ public class XeroSearchClientPage extends MainClass {
 		ClientExcel.clientNamesRemoval();
 		System.out.println(clientNames.size());
 
-		for (int i = 1; i < clientNames.size(); i++) {
+		for (int i = 0; i < clientNames.size(); i++) {
 			String client = clientNames.get(i);
 			Thread.sleep(3000);
 			wait.until(ExpectedConditions.elementToBeClickable(searchButton));
@@ -98,10 +98,14 @@ public class XeroSearchClientPage extends MainClass {
 						ClientExcel.saveExcelFile();
 					} else {
 						System.out.println("Client Code or Email not found for client: " + client);
+						ClientExcel.addClientData("client code not found", "client email not found");
+						ClientExcel.saveExcelFile();
 					}
 				} else {
 					System.out.println("Client name not found: " + client);
 					Thread.sleep(3000);
+					ClientExcel.addClientData("client name not found", "client name not found");
+					ClientExcel.saveExcelFile();
 					wait.until(ExpectedConditions.elementToBeClickable(searchButton));
 					searchButton.click();
 				}
