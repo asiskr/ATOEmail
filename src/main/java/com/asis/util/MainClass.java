@@ -14,12 +14,13 @@ public class MainClass {
 	public WebDriver driver;
 
 	static ClientExcel clientExcel = new ClientExcel();
-	static String filePath = "ClientData.xls"; 
+	public static String filePath = "ClientData.xls"; 
 	
 	public static ArrayList<String> firstColumn = ClientExcel.readFirstColumn(filePath);
 	public static ArrayList<String> clientNames = new ArrayList<>();
 	public static List<String> clientCodes = new ArrayList<>();
 	public static List<String> clientEmails = new ArrayList<>();
+	public static ArrayList<String> subjectColumnData = ClientExcel.readSubjectColumn(filePath);
 	
 	public static String ATO_USER_NAME="";
 	public static String USERNAME="";

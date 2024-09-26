@@ -12,6 +12,10 @@ import com.asis.util.MainClass;
 import Driver_manager.DriverManager;
 
 public class XeroSearchClientPage extends MainClass {
+	public static String client ;
+	public static String subject ;
+	public String emailText = null;
+	public String clientCodeText = null;
 
 	@FindBy(xpath = "//button[@title='GlobalSearch']//div[@role='presentation']//*[name()='svg']")
 	WebElement searchButton;
@@ -38,10 +42,12 @@ public class XeroSearchClientPage extends MainClass {
 
 	public void inputTheClientName() throws InterruptedException {
 		ClientExcel.clientNamesRemoval();
+		ClientExcel.readSubjectColumn(filePath);
 		System.out.println(clientNames.size());
 
-		for (int i = 1; i < clientNames.size(); i++) {
-			String client = clientNames.get(i);
+		for (int i = 0; i < clientNames.size(); i++) {
+			client = clientNames.get(i);
+			subject = subjectColumnData.get(i);
 			Thread.sleep(3000);
 			wait.until(ExpectedConditions.elementToBeClickable(searchButton));
 			searchButton.click();
@@ -95,13 +101,19 @@ public class XeroSearchClientPage extends MainClass {
 
 
 						ClientExcel.addClientData(clientCodeText, emailText);
-						ClientExcel.saveExcelFile();
+						ClientExcel.writeCombinedDataToExcel(clientCodeText, subject );
 					} else {
 						System.out.println("Client Code or Email not found for client: " + client);
+						ClientExcel.addClientData("client code not found", "client email not found");
+						ClientExcel.writeCombinedDataToExcel(clientCodeText, subject );
+						ClientExcel.saveExcelFile();
 					}
 				} else {
 					System.out.println("Client name not found: " + client);
 					Thread.sleep(3000);
+					ClientExcel.addClientData("client name not found", "client name not found");
+					ClientExcel.writeCombinedDataToExcel(clientCodeText, subject );
+					ClientExcel.saveExcelFile();
 					wait.until(ExpectedConditions.elementToBeClickable(searchButton));
 					searchButton.click();
 				}

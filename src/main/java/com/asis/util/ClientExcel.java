@@ -14,12 +14,13 @@ public class ClientExcel extends MainClass{
 	private static Workbook workbook;
 	private static Sheet sheet;
 	private static int currentRowNum = 1;
+	private static int currentRowNum2 = 1;
 
 	public void createEmptyExcelSheet() {
 		workbook = new HSSFWorkbook();
 		sheet = workbook.createSheet("Client Data");
 
-		String[] headers = { "Name", "Client ID", "Subject", "Channel", "Issue Date", "Client Code", "Client Email ID" };
+		String[] headers = { "Name", "Client ID", "Subject", "Channel", "Issue Date", "Client Code", "Client Email ID", "File Name" };
 
 		Row headerRow = sheet.createRow(0); 
 		for (int i = 0; i < headers.length; i++) {
@@ -68,7 +69,7 @@ public class ClientExcel extends MainClass{
 		for (int cnt = 0; cnt < firstColumn.size(); cnt++) {
 			String clientName = firstColumn.get(cnt).trim(); 
 
-			if (cnt > 1) {
+			if (cnt > 0) {
 				int length = clientName.length();
 				if (length > 2 && clientName.charAt(length - 2) == ' ' 
 						&& Character.isLetter(clientName.charAt(length - 1))) {
@@ -138,6 +139,52 @@ public class ClientExcel extends MainClass{
 				e.printStackTrace();
 			}
 		}
+	}
+	/*====================Writing the Combined data of client name and client code into column of excel===================================*/
+
+	public static void writeCombinedDataToExcel(String clientName, String clientCode) {
+		if (sheet != null) {
+			Row row = sheet.getRow(currentRowNum2); // Get existing row or create a new one
+			if (row == null) {
+				row = sheet.createRow(currentRowNum2);
+			}
+
+			String combinedData = clientName + " - " + clientCode;
+
+			Cell combinedCell = row.createCell(7); // Column index for G is 6
+			combinedCell.setCellValue(combinedData);
+			saveExcelFile();
+			System.out.println("dasdas");
+			currentRowNum2++;
+		}
+	}
+	
+	/*====================Read Of Subject Column===================================*/
+	
+	public static ArrayList<String> readSubjectColumn(String filePath) {
+		ArrayList<String> subjectColumnData = new ArrayList<>();
+
+		try (FileInputStream fis = new FileInputStream(new File(filePath));
+				Workbook workbook = WorkbookFactory.create(fis)) {
+
+			Sheet sheet = workbook.getSheetAt(0);
+			for (Row row : sheet) {
+				Cell cell = row.getCell(2); 
+				if (cell != null && cell.getCellType() == CellType.STRING) {
+					subjectColumnData.add(cell.getStringCellValue());
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		subjectColumnData.remove(0);
+		System.out.println(subjectColumnData);
+		return subjectColumnData;
+	} 
+	
+	
+	public static void main(String[] args) {
+		readSubjectColumn(filePath);
 	}
 }
 /*
