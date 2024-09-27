@@ -211,6 +211,29 @@ public class ClientExcel extends MainClass{
 		//		System.out.println(subjectColumnData);
 		return subjectColumnData;
 	} 
+	
+	/*====================Read PDF File Names from Column 7===================================*/
+	
+	public static ArrayList<String> readFileNamesFromColumn7(String filePath) {
+	    ArrayList<String> fileNamesColumn7 = new ArrayList<>();
+
+	    try (FileInputStream fis = new FileInputStream(new File(filePath));
+	         Workbook workbook = WorkbookFactory.create(fis)) {
+
+	        Sheet sheet = workbook.getSheetAt(0);
+	        for (Row row : sheet) {
+	            Cell cell = row.getCell(7);
+	            if (cell != null && cell.getCellType() == CellType.STRING) {
+	                fileNamesColumn7.add(cell.getStringCellValue());
+	            }
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	    fileNamesColumn7.remove(0);
+//	    System.out.println(fileNamesColumn7);
+	    return fileNamesColumn7;
+	}
 
 	/*====================Read PDF File Names from Column 8===================================*/
 
@@ -232,14 +255,14 @@ public class ClientExcel extends MainClass{
 			e.printStackTrace();
 		}
 		pdfFileNames.remove(0);
-		System.out.println("dsfdsj");
-		System.out.println(pdfFileNames);
+//		System.out.println(pdfFileNames);
 		return pdfFileNames;
 	}
 
 	/*====================Main Method===================================*/
 
 	public static void main(String[] args) {
-		readSubjectColumn(filePath);
+//		readSubjectColumn(filePath);
+		readFileNamesFromColumn7(filePath);
 	}
 }
