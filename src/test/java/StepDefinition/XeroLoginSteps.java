@@ -12,7 +12,7 @@ public class XeroLoginSteps {
 	public void user_enter_email_and_password() {
 		MainClass.setupDriver("Chrome");
 		xerologinPage = new XeroLoginPage();
-		MainClass.lauchSite("https://login.xero.com");
+		MainClass.launchSite("https://login.xero.com");
 	}
 
 	@When("User click on Enter button")

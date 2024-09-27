@@ -1,5 +1,7 @@
 package Pages;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -123,10 +125,20 @@ public class XeroSearchClientPage extends MainClass {
 				e.printStackTrace();
 			}
 		}
+	}
 
-		//        ClientExcel.saveExcelFile();
+	public void searchPdfFilesInDownloads(String downloadDir) {
+		ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
 
-		System.out.println(clientEmails);
-		System.out.println(clientCodes);
+		for (String pdfFileName : pdfFileNames) {
+			String fullPath = downloadDir + File.separator + pdfFileName.trim();
+			File pdfFile = new File(fullPath);
+
+			if (pdfFile.exists()) {
+				System.out.println("Found: " + pdfFileName);
+			} else {
+				System.out.println("Not Found: " + pdfFileName);
+			}
+		}
 	}
 }

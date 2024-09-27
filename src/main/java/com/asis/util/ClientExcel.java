@@ -168,7 +168,6 @@ public class ClientExcel extends MainClass{
 			Cell combinedCell = row.createCell(7);
 			combinedCell.setCellValue(combinedData);
 			saveExcelFile();
-			System.out.println("dasdas");
 			currentRowNum2++;
 		}
 	}
@@ -185,7 +184,6 @@ public class ClientExcel extends MainClass{
 
 			Cell codeCell = row.createCell(8); 
 			codeCell.setCellValue(name); 
-			System.out.println("dsdsds");
 			saveExcelFile();
 			currentRowNum3++;
 		}
@@ -210,9 +208,34 @@ public class ClientExcel extends MainClass{
 			e.printStackTrace();
 		}
 		subjectColumnData.remove(0);
-		System.out.println(subjectColumnData);
+		//		System.out.println(subjectColumnData);
 		return subjectColumnData;
 	} 
+
+	/*====================Read PDF File Names from Column 8===================================*/
+
+	public static ArrayList<String> readPdfFileNamesFromColumn8(String filePath) {
+		ArrayList<String> pdfFileNames = new ArrayList<>();
+
+		try (FileInputStream fis = new FileInputStream(new File(filePath));
+				Workbook workbook = WorkbookFactory.create(fis)) {
+
+			Sheet sheet = workbook.getSheetAt(0);
+			for (Row row : sheet) {
+				Cell cell = row.getCell(8); 
+				if (cell != null && cell.getCellType() == CellType.STRING) {
+					pdfFileNames.add(cell.getStringCellValue());
+				}
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		pdfFileNames.remove(0);
+		System.out.println("dsfdsj");
+		System.out.println(pdfFileNames);
+		return pdfFileNames;
+	}
 
 	/*====================Main Method===================================*/
 
