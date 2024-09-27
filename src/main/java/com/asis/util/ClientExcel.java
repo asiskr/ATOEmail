@@ -15,12 +15,15 @@ public class ClientExcel extends MainClass{
 	private static Sheet sheet;
 	private static int currentRowNum = 1;
 	private static int currentRowNum2 = 1;
+	private static int currentRowNum3 = 1;
+
+	/*====================Creation of Empty Excel Sheet===================================*/
 
 	public void createEmptyExcelSheet() {
 		workbook = new HSSFWorkbook();
 		sheet = workbook.createSheet("Client Data");
 
-		String[] headers = { "Name", "Client ID", "Subject", "Channel", "Issue Date", "Client Code", "Client Email ID", "File Name" };
+		String[] headers = { "Name", "Client ID", "Subject", "Channel", "Issue Date", "Client Code", "Client Email ID", "Rename File", "PDF Name" };
 
 		Row headerRow = sheet.createRow(0); 
 		for (int i = 0; i < headers.length; i++) {
@@ -28,6 +31,28 @@ public class ClientExcel extends MainClass{
 			cell.setCellValue(headers[i]); 
 		}
 	}
+	
+	/*====================Saving the Excel===================================*/
+
+	public static void saveExcelFile() {
+		String fileName = "ClientData.xls";
+		File file = new File(fileName);
+
+		try (FileOutputStream fileOut = new FileOutputStream(file)) {
+			workbook.write(fileOut);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				workbook.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/*====================Table Extraction and Putting data into Excel===================================*/
+
 	public static ArrayList<ArrayList<String>> writeDataToExcel(ArrayList<ArrayList<String>> data) {
 		if (sheet == null) {
 			return data;
@@ -43,6 +68,8 @@ public class ClientExcel extends MainClass{
 		}
 		return data;
 	}
+
+	/*====================Read Of First Column===================================*/
 
 	public static ArrayList<String> readFirstColumn(String filePath) {
 		ArrayList<String> firstColumnData = new ArrayList<>();
@@ -62,6 +89,9 @@ public class ClientExcel extends MainClass{
 		}
 		return firstColumnData;
 	} 
+
+	/*====================Removal of Last character of client name ===================================*/
+
 	public static void clientNamesRemoval() {
 		String filePath = "ClientData.xls"; 
 		ArrayList<String> firstColumn = readFirstColumn(filePath); 
@@ -75,15 +105,14 @@ public class ClientExcel extends MainClass{
 						&& Character.isLetter(clientName.charAt(length - 1))) {
 					clientName = clientName.substring(0, length - 2);
 				}
-
-				// Format the name if it contains a comma
 				clientName = formatCommaSeparatedName(clientName);
 				clientName = capitalizeName(clientName);
-				//	            System.out.println(clientName);
 				clientNames.add(clientName); 
 			}
 		}
 	}
+
+	/*====================Formating of the client name data===================================*/
 
 	private static String formatCommaSeparatedName(String name) {
 		if (name.contains(",")) {
@@ -92,6 +121,8 @@ public class ClientExcel extends MainClass{
 		}
 		return name;
 	}
+
+	/*====================Changing the client name into capital form===================================*/
 
 	private static String capitalizeName(String name) {
 		if (name == null || name.isEmpty()) {
@@ -108,59 +139,61 @@ public class ClientExcel extends MainClass{
 		return capitalized.toString().trim();
 	}
 
+	/*====================Adding the client code and email into excel sheet===================================*/
+
 	public static void addClientData(String clientCode, String clientEmail) {
 		if (sheet != null) {
-			Row row = sheet.getRow(currentRowNum); // Get existing row or create a new one
+			Row row = sheet.getRow(currentRowNum);
 			if (row == null) {
 				row = sheet.createRow(currentRowNum);
 			}
 
-			Cell codeCell = row.createCell(5); // Column index for "Client Code" is 5
-			Cell emailCell = row.createCell(6); // Column index for "Client Email ID" is 6
-			codeCell.setCellValue(clientCode); // Set the value in the "Client Code" column
-			emailCell.setCellValue(clientEmail); // Set the value in the "Client Email ID" column
+			Cell codeCell = row.createCell(5); 
+			Cell emailCell = row.createCell(6); 
+			codeCell.setCellValue(clientCode); 
+			emailCell.setCellValue(clientEmail); 
 
-			currentRowNum++; // Increment row number for the next entry
+			currentRowNum++;
 		}
 	}
+	
+	/*====================Adding the PDF name into excel sheet===================================*/
 
-	public static void saveExcelFile() {
-		String fileName = "ClientData.xls";
-		File file = new File(fileName);
-
-		try (FileOutputStream fileOut = new FileOutputStream(file)) {
-			workbook.write(fileOut);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				workbook.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+	public static void addPdfName(String name) {
+		if (sheet != null) {
+			Row row = sheet.getRow(currentRowNum3);
+			if (row == null) {
+				row = sheet.createRow(currentRowNum3);
 			}
+
+			Cell codeCell = row.createCell(8); 
+			codeCell.setCellValue(name); 
+			saveExcelFile();
+			currentRowNum3++;
 		}
 	}
+
 	/*====================Writing the Combined data of client name and client code into column of excel===================================*/
 
 	public static void writeCombinedDataToExcel(String clientName, String clientCode) {
 		if (sheet != null) {
-			Row row = sheet.getRow(currentRowNum2); // Get existing row or create a new one
+			Row row = sheet.getRow(currentRowNum2); 
 			if (row == null) {
 				row = sheet.createRow(currentRowNum2);
 			}
 
 			String combinedData = clientName + " - " + clientCode;
 
-			Cell combinedCell = row.createCell(7); // Column index for G is 6
+			Cell combinedCell = row.createCell(7); 
 			combinedCell.setCellValue(combinedData);
 			saveExcelFile();
 			System.out.println("dasdas");
 			currentRowNum2++;
 		}
 	}
-	
+
 	/*====================Read Of Subject Column===================================*/
-	
+
 	public static ArrayList<String> readSubjectColumn(String filePath) {
 		ArrayList<String> subjectColumnData = new ArrayList<>();
 
@@ -178,70 +211,37 @@ public class ClientExcel extends MainClass{
 			e.printStackTrace();
 		}
 		subjectColumnData.remove(0);
-		System.out.println(subjectColumnData);
+//		System.out.println(subjectColumnData);
 		return subjectColumnData;
 	} 
 	
-	
+	/*====================Read Of Second Column===================================*/
+
+	public static ArrayList<String> readSecondColumn(String filePath) {
+		ArrayList<String> secondColumnData = new ArrayList<>();
+
+		try (FileInputStream fis = new FileInputStream(new File(filePath));
+				Workbook workbook = WorkbookFactory.create(fis)) {
+
+			Sheet sheet = workbook.getSheetAt(0);
+			for (Row row : sheet) {
+				Cell cell = row.getCell(1); 
+				if (cell != null && cell.getCellType() == CellType.STRING) {
+					subjectColumnData.add(cell.getStringCellValue());
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+//		secondColumnData.remove(0);
+		System.out.println(secondColumnData);
+		return secondColumnData;
+	} 
+
+	/*====================Main Method===================================*/
+
 	public static void main(String[] args) {
 		readSubjectColumn(filePath);
+		readSecondColumn(filePath);
 	}
 }
-/*
-	private static int currentRowNum = 1; // Start from row 1 since row 0 is for headers
-
-	public static void addClientCode(String clientCode) {
-		if (sheet != null) {
-			Row row1 = sheet.createRow(currentRowNum++); // Create a new row and increment row number
-			Cell cell2 = row1.createCell(5); // Column index for "Client Code" is 5
-			cell2.setCellValue(clientCode); // Set the value in the "Client Code" column
-		}
-	}
-	private static int currentRowNum2 = 1; // Start from row 1 since row 0 is for headers
-
-	public static void addClientEmail(String clientEmail) {
-		if (sheet != null) {
-			Row row1 = sheet.createRow(currentRowNum2++); // Create a new row and increment row number
-			Cell cell2 = row1.createCell(6); // Column index for "Client Code" is 5
-			cell2.setCellValue(clientEmail); // Set the value in the "Client Code" column
-		}
-	}
-}/*
-	public static void main(String[] args) {
-		ClientExcel clientExcel = new ClientExcel();
-		clientExcel.createEmptyExcelSheet();
-
-		// Add client codes
-		clientExcel.addClientCode("ClientCode1");
-		clientExcel.addClientCode("ClientCode2");
-		clientExcel.addClientCode("ClientCode3");
-
-		// Save the Excel file
-		clientExcel.saveExcelFile();
-	}
-
-
-}
-/*
-	public static void main(String args[]) {
-		ClientExcel clientExcel = new ClientExcel();
-		clientExcel.clientNamesRemoval();
-	}
-}
-
-	public void clientNamesRemoval() {
-		String filePath = "ClientData.xls"; 
-		ArrayList<String> firstColumn = readFirstColumn(filePath);
-		ArrayList<String> clientNames = new ArrayList<>();
-
-		System.out.println("All Client Names:");
-
-		for (String clientName : firstColumn) {
-			if (clientName.matches(".* [A-Z]$")) {
-				clientName = clientName.substring(0, clientName.length() - 2); 
-			}
-			clientNames.add(clientName.trim()); 
-			System.out.println(clientName); 
-		}
-	}
- */
