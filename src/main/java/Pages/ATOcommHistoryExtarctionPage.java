@@ -9,6 +9,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import com.asis.util.ClientExcel;
 import com.asis.util.MainClass;
 import Driver_manager.DriverManager;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,14 +46,6 @@ public class ATOcommHistoryExtarctionPage extends MainClass {
 		wait.until(ExpectedConditions.elementToBeClickable(yesPopUp));
 		yesPopUp.click();
 	}
-	public void clickAllLinks() throws InterruptedException {
-		wait.until(ExpectedConditions.visibilityOfAllElements(links));
-		for (WebElement link : links) {
-			wait.until(ExpectedConditions.elementToBeClickable(link));
-			Thread.sleep(3000);
-			link.click();
-		}
-	}
 	public ArrayList<ArrayList<String>> extractCommTableStatement() throws InterruptedException {
 		creator.createEmptyExcelSheet(); 
 		Thread.sleep(5000);
@@ -70,6 +64,40 @@ public class ATOcommHistoryExtarctionPage extends MainClass {
 		System.out.println(ACTIVITY_STATEMENT_DATA);
 		ClientExcel.writeDataToExcel(ACTIVITY_STATEMENT_DATA);
 		return ACTIVITY_STATEMENT_DATA;
+	}
+	
+	public void clickAllLinks() throws InterruptedException {
+		String downloadDir = "C:\\Users\\test\\Downloads";
+
+		wait.until(ExpectedConditions.visibilityOfAllElements(links));
+
+		for (WebElement link : links) {
+			wait.until(ExpectedConditions.elementToBeClickable(link));
+			Thread.sleep(3000);
+
+			link.click(); 
+			Thread.sleep(5000);
+			printLatestDownloadedFileName(downloadDir);
+		}
+	}
+	public void printLatestDownloadedFileName(String downloadDir) {
+		File dir = new File(downloadDir);
+		File[] files = dir.listFiles();
+
+		if (files != null && files.length > 0) {
+			File latestFile = files[0];
+			for (File file : files) {
+				if (file.lastModified() > latestFile.lastModified()) {
+					latestFile = file;
+				}
+			}
+			name = latestFile.getName();
+			ClientExcel.addPdfName(name);
+//			ClientExcel.saveExcelFile();
+			System.out.println("Downloaded file saved as: " + name);
+		} else {
+			System.out.println("No files found in the directory.");
+		}
 	}
 	public void closeBrowser() {
 		DriverManager.getDriver().quit();

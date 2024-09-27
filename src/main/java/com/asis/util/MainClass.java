@@ -15,12 +15,15 @@ public class MainClass {
 
 	static ClientExcel clientExcel = new ClientExcel();
 	public static String filePath = "ClientData.xls"; 
+	public static String name;
 	
 	public static ArrayList<String> firstColumn = ClientExcel.readFirstColumn(filePath);
 	public static ArrayList<String> clientNames = new ArrayList<>();
 	public static List<String> clientCodes = new ArrayList<>();
 	public static List<String> clientEmails = new ArrayList<>();
+	public static ArrayList<String> firstColumnData = ClientExcel.readSubjectColumn(filePath);
 	public static ArrayList<String> subjectColumnData = ClientExcel.readSubjectColumn(filePath);
+	public static ArrayList<String> secondColumnData = ClientExcel.readSubjectColumn(filePath);
 	
 	public static String ATO_USER_NAME="";
 	public static String USERNAME="";
