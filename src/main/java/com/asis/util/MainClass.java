@@ -12,16 +12,23 @@ import Driver_manager.DriverManager;
 
 public class MainClass {
 	public WebDriver driver;
+	
+	public static String downloadDir = "C:\\Users\\test\\Downloads";
+	public static String newFilePath ;
 
 	static ClientExcel clientExcel = new ClientExcel();
 	public static String filePath = "ClientData.xls"; 
-	
+	public static String name;
+
 	public static ArrayList<String> firstColumn = ClientExcel.readFirstColumn(filePath);
 	public static ArrayList<String> clientNames = new ArrayList<>();
+	public static ArrayList<String> fileNames = new ArrayList<>();
 	public static List<String> clientCodes = new ArrayList<>();
 	public static List<String> clientEmails = new ArrayList<>();
 	public static ArrayList<String> subjectColumnData = ClientExcel.readSubjectColumn(filePath);
-	
+	public static ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
+	public static ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath);
+
 	public static String ATO_USER_NAME="";
 	public static String USERNAME="";
 	public static String SENDER_TO="";
@@ -41,9 +48,14 @@ public class MainClass {
 
 	public  static JavascriptExecutor js;
 
+	/*====================Set up Driver===================================*/
+
 	public static void setupDriver(String browser) {
 		DriverManager.setDriver(browser);
 	}
+
+	/*====================Set Properties===================================*/
+
 	public void setProperties() {
 		ATO_USER_NAME=System.getProperty("ATO_Id");
 		XERO_USER_NAME=System.getProperty("XERO_Id");
@@ -55,13 +67,19 @@ public class MainClass {
 		XERO_SECURITY_QUEST3=System.getProperty("Security_Question_3");
 		XERO_SECURITY_ANS3=System.getProperty("Security_Answer_3");
 	}
-	public static void lauchSite(String url) {
+
+	/*====================Launch Site===================================*/
+
+	public static void launchSite(String url) {
 		DriverManager.getDriver().get(url);
 		DriverManager.getDriver().manage().window().maximize();
 		DriverManager.getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
 		wait = new WebDriverWait(DriverManager.getDriver(), Duration.ofSeconds(30));
 		js = (JavascriptExecutor) DriverManager.getDriver();
 	}
+
+	/*====================Close Browser===================================*/
+
 	public void tearDown() {
 		DriverManager.getDriver().quit();
 	}	

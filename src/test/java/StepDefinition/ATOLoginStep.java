@@ -14,7 +14,7 @@ public class ATOLoginStep extends MainClass {
 		setupDriver("Chrome");
 		loginPage = new ATOLoginPage();
 
-		lauchSite("https://onlineservices.ato.gov.au/onlineservices/");
+		launchSite("https://onlineservices.ato.gov.au/onlineservices/");
 		loginPage.clickOnMyGOVButton();
 		loginPage.sendingEmailAddress();
 		loginPage.clickOnLoginButton();
