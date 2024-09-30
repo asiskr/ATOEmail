@@ -16,7 +16,7 @@ public class ATOSelectingDatePage extends MainClass{
 
 	@FindBy(xpath="//select[@id='dd-atoo-cch-time-period-001']")
 	private WebElement dateSelection;
-	@FindBy(xpath="//option[contains(text(),'Choose dates')]")
+	@FindBy(xpath="//option[contains(text(),'Last 24 hours')]")
 	private WebElement chooseDates;
 	@FindBy(xpath="//input[@id='dp-atoo-cch-from-001']")
 	private WebElement from;
@@ -45,10 +45,12 @@ public class ATOSelectingDatePage extends MainClass{
 	public void selectDate() {
 		wait.until(ExpectedConditions.elementToBeClickable(chooseDates));
 		chooseDates.click();
-		wait.until(ExpectedConditions.elementToBeClickable(from));
-		from.sendKeys(formattedDate);
-		wait.until(ExpectedConditions.elementToBeClickable(to));
-		to.sendKeys(formattedDate);
+		
+//		wait.until(ExpectedConditions.elementToBeClickable(chooseDates));
+//		chooseDates.click();
+//		wait.until(ExpectedConditions.elementToBeClickable(from));
+//		from.sendKeys(formattedDate);
+//		wait.until(ExpectedConditions.elementToBeClickable(to));
 	}
 	public void clickSMS() {
 		wait.until(ExpectedConditions.elementToBeClickable(sms));

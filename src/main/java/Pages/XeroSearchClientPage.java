@@ -45,7 +45,7 @@ public class XeroSearchClientPage extends MainClass {
 	public void inputTheClientName() throws InterruptedException {
 		ClientExcel.clientNamesRemoval();
 		ClientExcel.readSubjectColumn(filePath);
-//		System.out.println(clientNames.size());
+		//		System.out.println(clientNames.size());
 
 		for (int i = 0; i < clientNames.size(); i++) {
 			client = clientNames.get(i);
@@ -76,7 +76,7 @@ public class XeroSearchClientPage extends MainClass {
 						try {
 							wait.until(ExpectedConditions.visibilityOf(clientEmail2));
 						} catch (Exception e2) {
-//							System.out.println("Both clientEmail and clientEmail2 are not visible. " + client);
+							//							System.out.println("Both clientEmail and clientEmail2 are not visible. " + client);
 						}
 					}
 					wait.until(ExpectedConditions.visibilityOf(clientCode));
@@ -90,28 +90,24 @@ public class XeroSearchClientPage extends MainClass {
 						try {
 							emailText = clientEmail2.getText().trim();
 						} catch (Exception e2) {
-//							System.out.println("Failed to retrieve email text from both clientEmail and clientEmail2.");
+							//							System.out.println("Failed to retrieve email text from both clientEmail and clientEmail2.");
 						}
 					}
 
 					if (clientCode.isDisplayed()) {
 						clientCodeText = clientCode.getText().trim();
 					}
-					if (emailText != null && clientCodeText != null) {
-//						System.out.println("Extracted Email: " + emailText);
-//						System.out.println("Extracted Client Code: " + clientCodeText);
-
-
+					if (emailText != null && clientCodeText != "-") {
 						ClientExcel.addClientData(clientCodeText, emailText);
 						ClientExcel.writeCombinedDataToExcel(clientCodeText, subject );
-					} else {
-//						System.out.println("Client Code or Email not found for client: " + client);
+					} 
+					else {
 						ClientExcel.addClientData("client code not found", "client email not found");
 						ClientExcel.writeCombinedDataToExcel(clientCodeText, subject );
 						ClientExcel.saveExcelFile();
 					}
 				} else {
-//					System.out.println("Client name not found: " + client);
+
 					Thread.sleep(3000);
 					ClientExcel.addClientData("client name not found", "client name not found");
 					ClientExcel.writeCombinedDataToExcel(clientCodeText, subject );
@@ -121,7 +117,6 @@ public class XeroSearchClientPage extends MainClass {
 				}
 
 			} catch (Exception e) {
-//				System.out.println("Error occurred while searching for client: " + client);
 				e.printStackTrace();
 			}
 		}
@@ -139,17 +134,11 @@ public class XeroSearchClientPage extends MainClass {
 				String newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + ".pdf";
 				File renamedFile = new File(newFilePath);
 				if (pdfFile.renameTo(renamedFile)) {
-//					System.out.println("File renamed");
 					cnt++;
 				} else {
-//					System.out.println("Failed to rename the file: " + pdfFileName);
 					cnt++;
 				}
-
-			} else {
-//				System.out.println("Not Found: " + pdfFileName);
-				
-			}
+			} 
 		}
 	}
 }
