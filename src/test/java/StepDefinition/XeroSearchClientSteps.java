@@ -1,8 +1,10 @@
 package StepDefinition;
 
+import com.asis.util.MainClass;
+
 import Pages.XeroSearchClientPage;
 import io.cucumber.java.en.*;
-public class XeroSearchClientSteps {
+public class XeroSearchClientSteps extends MainClass {
 
 	private XeroSearchClientPage search = new XeroSearchClientPage();
 
@@ -19,15 +21,16 @@ public class XeroSearchClientSteps {
 	@When("I click on the search button")
 	public void i_click_on_the_search_button() throws InterruptedException {
 		search.inputTheClientName();
+		search.searchPdfFilesInDownloads(downloadDir);
 	}
 
 	@Then("I should see the client code")
 	public void i_should_see_the_client_code() {
-//		search.getClientCode();
+		//		search.getClientCode();
 	}
 
 	@Then("I should see the client email")
 	public void i_should_see_the_client_email() {
-//		search.getClientEmail();
+		//		search.getClientEmail();
 	}
 }
