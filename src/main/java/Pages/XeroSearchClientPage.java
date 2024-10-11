@@ -47,13 +47,13 @@ public class XeroSearchClientPage extends MainClass {
 		ClientExcel.readSubjectColumn(filePath);
 		//		System.out.println(clientNames.size());
 
-		for (int i = 0; i < clientNames.size(); i++) {
+		for (int i = 0; i < Math.min(clientNames.size(), subjectColumnData.size()); i++) {
 			client = clientNames.get(i);
 			subject = subjectColumnData.get(i);
 			Thread.sleep(3000);
 			wait.until(ExpectedConditions.elementToBeClickable(searchButton));
 			searchButton.click();
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 			wait.until(ExpectedConditions.elementToBeClickable(inputBox));
 			inputBox.clear();
 			inputBox.sendKeys(client);
@@ -122,23 +122,60 @@ public class XeroSearchClientPage extends MainClass {
 		}
 	}
 
-	public void searchPdfFilesInDownloads(String downloadDir) {
-		ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
-		int cnt =0;
-		for (String pdfFileName : pdfFileNames) {
-			String fullPath = downloadDir + File.separator + pdfFileName.trim();
-			File pdfFile = new File(fullPath);
+	public void renamePdfFilesInDownloads(String downloadDir) {
+	    ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
+	    ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath); // Assuming column 7 is used for renaming
 
-			if (pdfFile.exists()) {
-				System.out.println("Found: " + pdfFileName);
-				String newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + ".pdf";
-				File renamedFile = new File(newFilePath);
-				if (pdfFile.renameTo(renamedFile)) {
-					cnt++;
-				} else {
-					cnt++;
-				}
-			} 
-		}
+	    // Check if fileNamesColumn7 has enough entries
+	    if (pdfFileNames.size() != fileNamesColumn7.size()) {
+	        System.out.println("Mismatch between column 8 and column 7 sizes.");
+	        return;
+	    }
+
+	    int cnt = 0;
+	    for (String pdfFileName : pdfFileNames) {
+	        String fullPath = downloadDir + File.separator + pdfFileName.trim();
+	        File pdfFile = new File(fullPath);
+
+	        if (pdfFile.exists()) {
+	            System.out.println("Found: " + pdfFileName);
+	            
+	            // Get the current file extension
+	            String currentExtension = getFileExtension(pdfFile);
+
+	            // Ensure we are not going out of bounds
+	            if (cnt < fileNamesColumn7.size()) {
+	                // Create a new file name with the correct extension
+	                String newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + "." + currentExtension;
+	                File renamedFile = new File(newFilePath);
+	                
+	                if (pdfFile.renameTo(renamedFile)) {
+	                    System.out.println("Renamed " + pdfFileName + " to " + fileNamesColumn7.get(cnt) + "." + currentExtension);
+	                } else {
+	                    System.out.println("Failed to rename " + pdfFileName);
+	                }
+	                cnt++;
+	            } else {
+	                System.out.println("Index out of bounds for fileNamesColumn7.");
+	                break;
+	            }
+	        } else {
+	            System.out.println("File not found: " + pdfFileName);
+	        }
+	    }
 	}
+
+	// Helper method to get the file extension
+	private String getFileExtension(File file) {
+	    String fileName = file.getName();
+	    int dotIndex = fileName.lastIndexOf('.');
+	    if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+	        return fileName.substring(dotIndex + 1);  // Return the file extension without the dot
+	    } else {
+	        return "";  // No extension found
+	    }
+	}
+
+	
+
 }
