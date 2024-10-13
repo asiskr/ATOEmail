@@ -5,7 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 
@@ -136,6 +141,7 @@ public class ClientExcel extends MainClass{
 			currentRowNum++;
 		}
 	}
+	
 	/*====================Saving the Excel===================================*/
 
 	public static void saveExcelFile() {
@@ -163,7 +169,7 @@ public class ClientExcel extends MainClass{
 				row = sheet.createRow(currentRowNum2);
 			}
 
-			String combinedData = clientName + " - " + clientCode;
+			String combinedData = clientName + " " + clientCode;
 
 			Cell combinedCell = row.createCell(7);
 			combinedCell.setCellValue(combinedData);
@@ -211,28 +217,28 @@ public class ClientExcel extends MainClass{
 		//		System.out.println(subjectColumnData);
 		return subjectColumnData;
 	} 
-	
+
 	/*====================Read PDF File Names from Column 7===================================*/
-	
+
 	public static ArrayList<String> readFileNamesFromColumn7(String filePath) {
-	    ArrayList<String> fileNamesColumn7 = new ArrayList<>();
+		ArrayList<String> fileNamesColumn7 = new ArrayList<>();
 
-	    try (FileInputStream fis = new FileInputStream(new File(filePath));
-	         Workbook workbook = WorkbookFactory.create(fis)) {
+		try (FileInputStream fis = new FileInputStream(new File(filePath));
+				Workbook workbook = WorkbookFactory.create(fis)) {
 
-	        Sheet sheet = workbook.getSheetAt(0);
-	        for (Row row : sheet) {
-	            Cell cell = row.getCell(7);
-	            if (cell != null && cell.getCellType() == CellType.STRING) {
-	                fileNamesColumn7.add(cell.getStringCellValue());
-	            }
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	    fileNamesColumn7.remove(0);
-//	    System.out.println(fileNamesColumn7);
-	    return fileNamesColumn7;
+			Sheet sheet = workbook.getSheetAt(0);
+			for (Row row : sheet) {
+				Cell cell = row.getCell(7);
+				if (cell != null && cell.getCellType() == CellType.STRING) {
+					fileNamesColumn7.add(cell.getStringCellValue());
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		fileNamesColumn7.remove(0);
+		//	    System.out.println(fileNamesColumn7);
+		return fileNamesColumn7;
 	}
 
 	/*====================Read PDF File Names from Column 8===================================*/
@@ -255,14 +261,122 @@ public class ClientExcel extends MainClass{
 			e.printStackTrace();
 		}
 		pdfFileNames.remove(0);
-//		System.out.println(pdfFileNames);
+		System.out.println(pdfFileNames);
+		
 		return pdfFileNames;
+	}
+
+	/*====================Check if NOA exist for that client===================================*/
+	
+	public static void checkNoticeOfAssessment(String filePath, String downloadDir) {
+	    ArrayList<String> subjectColumnData = ClientExcel.readSubjectColumn(filePath);  
+	    boolean found = false;  
+
+	    ArrayList<String> firstColumnData = ClientExcel.readFirstColumn(filePath);
+
+	    for (int i = 0; i < subjectColumnData.size(); i++) {
+	        String subject = subjectColumnData.get(i).trim();
+	        
+	        if (subject.toLowerCase().startsWith("notice of assessment")) {
+	            String correspondingValue = ClientExcel.readPdfFileNamesFromColumn8(filePath).get(i+1).trim();
+	            
+	            String cellFromColumn0 = firstColumnData.get(i).trim();
+	            System.out.println("Corresponding value from column 0: " + cellFromColumn0);
+
+	            searchPdfFilesInDownloads1(filePath, downloadDir, correspondingValue);
+
+	            found = true;  
+	        }
+	    }
+
+	    if (!found) {
+	        System.out.println("No 'Notice of Assessment' found in the subject column.");
+	    }
+	}
+
+	/*====================Search PDF Files in Downloads===================================*/
+
+	public static void searchPdfFilesInDownloads1(String filePath, String downloadDir, String pdfFileName) {
+		String fullPath = downloadDir + File.separator + pdfFileName;
+
+		File pdfFile = new File(fullPath);
+		if (pdfFile.exists()) {
+			//	        System.out.println("Found: " + pdfFileName);
+			readPdfFile(fullPath);
+		} else {
+			System.out.println("Not Found: " + pdfFileName);
+		}
+	}
+
+
+	/*====================Read PDF from Downloads===================================*/
+
+
+	public static void readPdfFile(String pdfFilePath) {
+		File pdfFile = new File(pdfFilePath);
+		if (pdfFilePath.toLowerCase().endsWith(".html")) {
+			System.out.println("Found HTML file. Skipping: " + pdfFilePath);
+			return;
+		}	   
+		try (PDDocument document = PDDocument.load(pdfFile)) {
+			if (!document.isEncrypted()) {
+				PDFTextStripper pdfStripper = new PDFTextStripper();
+				String pdfText = pdfStripper.getText(document);
+				//	            System.out.println("Content of the PDF:\n" + pdfText);
+
+				HashMap<String, String> extractedData = new HashMap<>();
+
+				// Extract Date of Issue
+				Pattern datePattern = Pattern.compile("Date of issue\\s*(\\d{2} \\w+ \\d{4})");
+				Matcher dateMatcher = datePattern.matcher(pdfText);
+				if (dateMatcher.find()) {
+					String dateOfIssue = dateMatcher.group(1);
+					extractedData.put("Date of Issue", dateOfIssue);
+				}
+
+				// Extract Reference Number
+				Pattern refPattern = Pattern.compile("Our reference\\s*(\\d{3} \\d{3} \\d{3} \\d{4})");
+				Matcher refMatcher = refPattern.matcher(pdfText);
+				if (refMatcher.find()) {
+					String referenceNumber = refMatcher.group(1);
+					extractedData.put("Reference Number", referenceNumber);
+				}
+
+				// Extract Taxable Income
+				Pattern incomePattern = Pattern.compile("Your taxable income is \\$([\\d,]+)");
+				Matcher incomeMatcher = incomePattern.matcher(pdfText);
+				if (incomeMatcher.find()) {
+					String taxableIncome = incomeMatcher.group(1).replace(",", "");
+					extractedData.put("Taxable Income", taxableIncome);
+				}
+
+				// Extract Result of the Notice
+				Pattern resultPattern = Pattern.compile("Result of this notice\\s+(\\S+ \\S+)");
+				Matcher resultMatcher = resultPattern.matcher(pdfText);
+				if (resultMatcher.find()) {
+					String resultAmount = resultMatcher.group(1);
+					extractedData.put("Result", resultAmount );
+				}
+				else {
+					extractedData.put("Result of Notice", "0.0");
+				}
+				System.out.println("Extracted Data: " + extractedData);
+
+			} else {
+				System.out.println("The PDF is encrypted. Cannot read.");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*====================Main Method===================================*/
 
 	public static void main(String[] args) {
-//		readSubjectColumn(filePath);
-		readFileNamesFromColumn7(filePath);
+		//		readSubjectColumn(filePath);
+		//		readFileNamesFromColumn7(filePath);
+		//		checkNoticeOfAssessmentAndPrintIndex(filePath);
+		readPdfFileNamesFromColumn8(filePath);
+//		checkNoticeOfAssessment(filePath, downloadDir);
 	}
 }

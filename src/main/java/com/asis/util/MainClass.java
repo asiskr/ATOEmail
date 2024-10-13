@@ -14,6 +14,7 @@ public class MainClass {
 	public WebDriver driver;
 	
 	public static String downloadDir = "C:\\Users\\test\\Downloads";
+	
 	public static String newFilePath ;
 
 	static ClientExcel clientExcel = new ClientExcel();
