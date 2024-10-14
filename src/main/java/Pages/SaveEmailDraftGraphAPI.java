@@ -101,18 +101,6 @@ public class SaveEmailDraftGraphAPI extends MainClass{
 
   
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
     private static boolean isValidEmail(String email) {
         // Basic email validation: check if it contains '@' and no spaces
         return email != null && email.contains("@") && !email.contains(" ") && !email.isEmpty();
