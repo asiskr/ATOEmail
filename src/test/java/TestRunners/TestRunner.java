@@ -8,8 +8,8 @@ import io.cucumber.junit.CucumberOptions;
 @RunWith(Cucumber.class)
 @CucumberOptions(
 		features= 
-//	{"src/test/resources/Features/"},
-		
+	{"src/test/resources/Features/"},
+		/*
 	{
 	
 	"src/test/resources/Features/test1_XeroLogin.feature",
@@ -18,7 +18,7 @@ import io.cucumber.junit.CucumberOptions;
 	"src/test/resources/Features/test5_XeroTaxReturn.feature",
 //	"src/test/resources/Features/5test_ATOFetchingICAStatement.feature",
 	},
-	
+	*/
 	glue={"StepDefinition","MyHooks"},
 	plugin = {"pretty"}
 		)

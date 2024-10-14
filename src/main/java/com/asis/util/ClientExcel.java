@@ -214,7 +214,7 @@ public class ClientExcel extends MainClass{
 			e.printStackTrace();
 		}
 		subjectColumnData.remove(0);
-		//		System.out.println(subjectColumnData);
+				System.out.println(subjectColumnData);
 		return subjectColumnData;
 	} 
 
@@ -237,10 +237,70 @@ public class ClientExcel extends MainClass{
 			e.printStackTrace();
 		}
 		fileNamesColumn7.remove(0);
-		//	    System.out.println(fileNamesColumn7);
+			    System.out.println(fileNamesColumn7);
 		return fileNamesColumn7;
 	}
+	 public static void renamePdfFilesInDownloads(String downloadDir) {
+	        ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
+	        ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath); // Assuming column 7 is used for renaming
 
+	        // Check if fileNamesColumn7 has enough entries
+	        if (pdfFileNames.size() != fileNamesColumn7.size()) {
+	            System.out.println("Mismatch between column 8 and column 7 sizes.");
+	            return;
+	        }
+
+	        int cnt = 0;
+	        for (String pdfFileName : pdfFileNames) {
+	            String fullPath = downloadDir + File.separator + pdfFileName.trim();
+	            File pdfFile = new File(fullPath);
+
+	            if (pdfFile.exists()) {
+	                System.out.println("Found: " + pdfFileName);
+
+	                // Get the current file extension
+	                String currentExtension = getFileExtension(pdfFile);
+	                String newFilePath;
+
+	                // Ensure we are not going out of bounds
+	                if (cnt < fileNamesColumn7.size()) {
+	                    // Create a new file name with the correct extension
+	                    if (currentExtension.equalsIgnoreCase("psd")) {
+	                        newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + ".pdf";
+	                    } else if (currentExtension.equalsIgnoreCase("html")) {
+	                        newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + ".html";
+	                    } else {
+	                        newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + "." + currentExtension;
+	                    }
+
+	                    File renamedFile = new File(newFilePath);
+	                    if (pdfFile.renameTo(renamedFile)) {
+	                        System.out.println("Renamed " + pdfFileName + " to " + renamedFile.getName());
+	                    } else {
+	                        System.out.println("Failed to rename " + pdfFileName);
+	                    }
+	                    cnt++;
+	                } else {
+	                    System.out.println("Index out of bounds for fileNamesColumn7.");
+	                    break;
+	                }
+	            } else {
+	                System.out.println("File not found: " + pdfFileName);
+	            }
+	        }
+	    }
+
+	    // Helper method to get the file extension
+	    private static String getFileExtension(File file) {
+	        String fileName = file.getName();
+	        int dotIndex = fileName.lastIndexOf('.');
+	        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+	            return fileName.substring(dotIndex + 1);  // Return the file extension without the dot
+	        } else {
+	            return "";  // No extension found
+	        }
+	    }
+	
 	/*====================Read PDF File Names from Column 8===================================*/
 
 	public static ArrayList<String> readPdfFileNamesFromColumn8(String filePath) {
@@ -374,9 +434,13 @@ public class ClientExcel extends MainClass{
 
 	public static void main(String[] args) {
 		//		readSubjectColumn(filePath);
-		//		readFileNamesFromColumn7(filePath);
+//				readFileNamesFromColumn7(filePath);
 		//		checkNoticeOfAssessmentAndPrintIndex(filePath);
-		readPdfFileNamesFromColumn8(filePath);
+//		readPdfFileNamesFromColumn8(filePath);
+				
+//		readSubjectColumn(filePath);
+//		renamePdfFilesInDownloads(downloadDir);
+		
 //		checkNoticeOfAssessment(filePath, downloadDir);
 	}
 }
