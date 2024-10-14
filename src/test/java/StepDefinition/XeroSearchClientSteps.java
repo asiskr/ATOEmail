@@ -21,7 +21,7 @@ public class XeroSearchClientSteps extends MainClass {
 	@When("I click on the search button")
 	public void i_click_on_the_search_button() throws InterruptedException {
 		search.inputTheClientName();
-		search.searchPdfFilesInDownloads(downloadDir);
+		search.renamePdfFilesInDownloads(downloadDir);
 	}
 
 	@Then("I should see the client code")

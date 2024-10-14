@@ -163,7 +163,7 @@ public class ClientExcel extends MainClass{
 				row = sheet.createRow(currentRowNum2);
 			}
 
-			String combinedData = clientName + " - " + clientCode;
+			String combinedData = clientName + "_" + clientCode;
 
 			Cell combinedCell = row.createCell(7);
 			combinedCell.setCellValue(combinedData);
@@ -208,7 +208,7 @@ public class ClientExcel extends MainClass{
 			e.printStackTrace();
 		}
 		subjectColumnData.remove(0);
-		//		System.out.println(subjectColumnData);
+				System.out.println(subjectColumnData);
 		return subjectColumnData;
 	} 
 	
