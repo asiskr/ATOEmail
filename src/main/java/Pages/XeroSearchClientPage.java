@@ -1,8 +1,15 @@
 package Pages;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -18,6 +25,7 @@ public class XeroSearchClientPage extends MainClass {
 	public static String subject ;
 	public String emailText = null;
 	public String clientCodeText = null;
+	public static String fullPath;
 
 	@FindBy(xpath = "//button[@title='GlobalSearch']//div[@role='presentation']//*[name()='svg']")
 	WebElement searchButton;
@@ -122,23 +130,47 @@ public class XeroSearchClientPage extends MainClass {
 		}
 	}
 
-	public void searchPdfFilesInDownloads(String downloadDir) {
-		ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
-		int cnt =0;
-		for (String pdfFileName : pdfFileNames) {
-			String fullPath = downloadDir + File.separator + pdfFileName.trim();
-			File pdfFile = new File(fullPath);
+	public void renamePdfFilesInDownloads(String downloadDir) {
+	    ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
+	    int cnt = 1;
 
-			if (pdfFile.exists()) {
-				System.out.println("Found: " + pdfFileName);
-				String newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + ".pdf";
-				File renamedFile = new File(newFilePath);
-				if (pdfFile.renameTo(renamedFile)) {
-					cnt++;
-				} else {
-					cnt++;
-				}
-			} 
-		}
+	    for (String pdfFileName : pdfFileNames) {
+	        String fullPath = downloadDir + File.separator + pdfFileName.trim();
+	        File pdfFile = new File(fullPath);
+
+	        if (pdfFile.exists()) {
+	            System.out.println("Found: " + pdfFileName);
+
+	            String fileExtension = getFileExtension(pdfFileName);
+
+	            String newFilePath;
+	            if (fileExtension.equalsIgnoreCase("psd")) {
+	                newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + ".pdf";
+	            } else if (fileExtension.equalsIgnoreCase("html")) {
+	                newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + ".html";
+	            } else {
+	                newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + "." + fileExtension;
+	            }
+
+	            File renamedFile = new File(newFilePath);
+	            if (pdfFile.renameTo(renamedFile)) {
+	                System.out.println("Renamed to: " + renamedFile.getName());
+	                cnt++;
+	            } else {
+	                System.out.println("Failed to rename: " + pdfFileName);
+	                cnt++;
+	            }
+	        }
+	    }
 	}
+
+	private String getFileExtension(String fileName) {
+	    int lastIndexOfDot = fileName.lastIndexOf('.');
+	    if (lastIndexOfDot > 0 && lastIndexOfDot < fileName.length() - 1) {
+	        return fileName.substring(lastIndexOfDot + 1).toLowerCase();
+	    } else {
+	        return "";
+	    }
+	}
+
 }
