@@ -20,7 +20,7 @@ import com.asis.util.MainClass;
 
 import Driver_manager.DriverManager;
 
-public class TaxReturnPage extends MainClass {
+public class XeroTaxReturnPage extends MainClass {
 	@FindBy(xpath="//button[contains(text(),'Tax')]")
 	private static WebElement tax;
 	@FindBy(xpath="//a[contains(text(),'Returns')]")
@@ -45,7 +45,7 @@ public class TaxReturnPage extends MainClass {
 	@FindBy(xpath="//input[@name='PayableRefundable']")
 	private static WebElement payableRefundable;
 
-	public TaxReturnPage(){
+	public XeroTaxReturnPage(){
 		PageFactory.initElements(DriverManager.getDriver(), this); 
 	}
 
@@ -81,21 +81,25 @@ public class TaxReturnPage extends MainClass {
 
 	public static void clickDateButton(String dateOfIssue1) {
 		wait.until(ExpectedConditions.elementToBeClickable(dateOfIssue));
+		dateOfIssue.clear();
 		dateOfIssue.sendKeys(dateOfIssue1);
 	}
 
 	public static void clickAtoRefButton(String referenceNumber) {
 		wait.until(ExpectedConditions.elementToBeClickable(atoRef));
+		atoRef.clear();
 		atoRef.sendKeys(referenceNumber);
 	}
 
 	public static void clickTaxableIncomeButton(String taxableIncome1) {
 		wait.until(ExpectedConditions.elementToBeClickable(taxableIncome));
+		taxableIncome.clear();
 		taxableIncome.sendKeys(taxableIncome1);
 	}
 
 	public static void clickPayableRefundableButton(String resultAmount) {
 		wait.until(ExpectedConditions.elementToBeClickable(payableRefundable));
+		payableRefundable.clear();
 		payableRefundable.sendKeys(resultAmount);
 	}
 	public static void searchAndExtractPdfData(String filePath, String downloadDir, String pdfFileName) throws InterruptedException {
@@ -153,7 +157,7 @@ public class TaxReturnPage extends MainClass {
 				}
 				catch(Exception e) {
 					// Now, check for the corresponding PDF file in downloads
-					String pdfFileName = ClientExcel.readPdfFileNamesFromColumn8(filePath).get(i + 1).trim();
+					String pdfFileName = ClientExcel.readPdfFileNamesFromColumn8(filePath).get(i).trim();
 //					searchAndExtractPdfData(filePath, downloadDir, pdfFileName);
 				}
 			}

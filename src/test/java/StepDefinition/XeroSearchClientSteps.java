@@ -15,23 +15,17 @@ public class XeroSearchClientSteps extends MainClass {
 
 	@When("I input the client name")
 	public void i_input_the_client_name() {
-//		search.clickOnSearchButton();
+		search.clickOnSearchButton();
 	}
 
 	@When("I click on the search button")
 	public void i_click_on_the_search_button() throws InterruptedException {
-//		search.inputTheClientName();
-//		search.checkNoticeOfAssessment(filePath,downloadDir);
+		search.inputTheClientName();
 		
 	}
 
 	@Then("I should see the client code")
 	public void i_should_see_the_client_code() {
 //		search.renamePdfFilesInDownloads(downloadDir);
-	}
-
-	@Then("I should see the client email")
-	public void i_should_see_the_client_email() {
-		//		search.getClientEmail();
 	}
 }

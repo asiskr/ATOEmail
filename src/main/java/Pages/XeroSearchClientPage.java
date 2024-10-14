@@ -1,15 +1,8 @@
 package Pages;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -25,7 +18,6 @@ public class XeroSearchClientPage extends MainClass {
 	public static String subject ;
 	public String emailText = null;
 	public String clientCodeText = null;
-	public static String fullPath;
 
 	@FindBy(xpath = "//button[@title='GlobalSearch']//div[@role='presentation']//*[name()='svg']")
 	WebElement searchButton;
@@ -55,13 +47,13 @@ public class XeroSearchClientPage extends MainClass {
 		ClientExcel.readSubjectColumn(filePath);
 		//		System.out.println(clientNames.size());
 
-		for (int i = 0; i < clientNames.size(); i++) {
+		for (int i = 0; i < Math.min(clientNames.size(), subjectColumnData.size()); i++) {
 			client = clientNames.get(i);
 			subject = subjectColumnData.get(i);
 			Thread.sleep(3000);
 			wait.until(ExpectedConditions.elementToBeClickable(searchButton));
 			searchButton.click();
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 			wait.until(ExpectedConditions.elementToBeClickable(inputBox));
 			inputBox.clear();
 			inputBox.sendKeys(client);
@@ -126,25 +118,6 @@ public class XeroSearchClientPage extends MainClass {
 
 			} catch (Exception e) {
 				e.printStackTrace();
-			}
-		}
-	}
-
-	public void renamePdfFilesInDownloads(String downloadDir) {
-		ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
-		int cnt =0;
-		for (String pdfFileName : pdfFileNames) {
-			String fullPath = downloadDir + File.separator + pdfFileName.trim();
-			File pdfFile = new File(fullPath);
-			if (pdfFile.exists()) {
-				System.out.println("Found: " + pdfFileName);
-				String newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + ".pdf";
-				File renamedFile = new File(newFilePath);
-				if (pdfFile.renameTo(renamedFile)) {
-					cnt++;
-				} else {
-					cnt++;
-				}
 			}
 		}
 	}

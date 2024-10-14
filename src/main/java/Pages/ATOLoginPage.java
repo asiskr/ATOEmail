@@ -23,7 +23,6 @@ public class ATOLoginPage extends MainClass{
 	}
 
 	public void clickOnMyGOVButton() throws InterruptedException {
-//		Thread.sleep(10000);
 		myGOV.click();
 	}
 
@@ -36,7 +35,5 @@ public class ATOLoginPage extends MainClass{
 		wait.until(ExpectedConditions.elementToBeClickable(loginButton));
 		loginButton.click();
 		Thread.sleep(3000);
-//		screenshotBytes = ((TakesScreenshot) DriverManager.getDriver()).getScreenshotAs(OutputType.BYTES);
-//		return screenshotBytes;
 	}
 }
