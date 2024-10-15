@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,6 +73,7 @@ public class ClientExcel extends MainClass{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println(firstColumnData);
 		return firstColumnData;
 	} 
 
@@ -141,7 +143,7 @@ public class ClientExcel extends MainClass{
 			currentRowNum++;
 		}
 	}
-	
+
 	/*====================Saving the Excel===================================*/
 
 	public static void saveExcelFile() {
@@ -169,7 +171,7 @@ public class ClientExcel extends MainClass{
 				row = sheet.createRow(currentRowNum2);
 			}
 
-			String combinedData = clientName + " " + clientCode;
+			String combinedData = clientName + " - " + clientCode;
 
 			Cell combinedCell = row.createCell(7);
 			combinedCell.setCellValue(combinedData);
@@ -207,16 +209,28 @@ public class ClientExcel extends MainClass{
 			for (Row row : sheet) {
 				Cell cell = row.getCell(2); 
 				if (cell != null && cell.getCellType() == CellType.STRING) {
-					subjectColumnData.add(cell.getStringCellValue());
+					String subject = cell.getStringCellValue();
+					subject = replaceSpecialCharacters(subject);
+					subjectColumnData.add(subject);
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		subjectColumnData.remove(0);
-				System.out.println(subjectColumnData);
+		subjectColumnData.remove(0); 
+		//		System.out.println(subjectColumnData);
 		return subjectColumnData;
-	} 
+	}
+
+	/*====================Replace special character===================================*/
+
+	private static String replaceSpecialCharacters(String subject) {
+		if (subject.contains("/") || subject.contains("\\")) {
+			subject = subject.replace("/", "or").replace("\\", "or");
+		}
+		return subject;
+	}
+
 
 	/*====================Read PDF File Names from Column 7===================================*/
 
@@ -237,70 +251,64 @@ public class ClientExcel extends MainClass{
 			e.printStackTrace();
 		}
 		fileNamesColumn7.remove(0);
-			    System.out.println(fileNamesColumn7);
+		//		System.out.println(fileNamesColumn7);
 		return fileNamesColumn7;
 	}
-	 public static void renamePdfFilesInDownloads(String downloadDir) {
-	        ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
-	        ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath); // Assuming column 7 is used for renaming
 
-	        // Check if fileNamesColumn7 has enough entries
-	        if (pdfFileNames.size() != fileNamesColumn7.size()) {
-	            System.out.println("Mismatch between column 8 and column 7 sizes.");
-	            return;
-	        }
+	/*====================Renaming the PDF file===================================*/
 
-	        int cnt = 0;
-	        for (String pdfFileName : pdfFileNames) {
-	            String fullPath = downloadDir + File.separator + pdfFileName.trim();
-	            File pdfFile = new File(fullPath);
+	public static void renamePdfFilesInDownloads(String downloadDir) {
+		ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
+		ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath); // Assuming column 7 is used for renaming
 
-	            if (pdfFile.exists()) {
-	                System.out.println("Found: " + pdfFileName);
+		if (pdfFileNames.size() != fileNamesColumn7.size()) {
+			//			System.out.println("Mismatch between column 8 and column 7 sizes.");
+			return;
+		}
 
-	                // Get the current file extension
-	                String currentExtension = getFileExtension(pdfFile);
-	                String newFilePath;
+		int cnt = 0;
+		for (String pdfFileName : pdfFileNames) {
+			String fullPath = downloadDir + File.separator + pdfFileName.trim();
+			File pdfFile = new File(fullPath);
 
-	                // Ensure we are not going out of bounds
-	                if (cnt < fileNamesColumn7.size()) {
-	                    // Create a new file name with the correct extension
-	                    if (currentExtension.equalsIgnoreCase("psd")) {
-	                        newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + ".pdf";
-	                    } else if (currentExtension.equalsIgnoreCase("html")) {
-	                        newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + ".html";
-	                    } else {
-	                        newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + "." + currentExtension;
-	                    }
+			if (pdfFile.exists()) {
+				System.out.println("Found: " + pdfFileName);
 
-	                    File renamedFile = new File(newFilePath);
-	                    if (pdfFile.renameTo(renamedFile)) {
-	                        System.out.println("Renamed " + pdfFileName + " to " + renamedFile.getName());
-	                    } else {
-	                        System.out.println("Failed to rename " + pdfFileName);
-	                    }
-	                    cnt++;
-	                } else {
-	                    System.out.println("Index out of bounds for fileNamesColumn7.");
-	                    break;
-	                }
-	            } else {
-	                System.out.println("File not found: " + pdfFileName);
-	            }
-	        }
-	    }
+				String currentExtension = getFileExtension(pdfFile);
 
-	    // Helper method to get the file extension
-	    private static String getFileExtension(File file) {
-	        String fileName = file.getName();
-	        int dotIndex = fileName.lastIndexOf('.');
-	        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
-	            return fileName.substring(dotIndex + 1);  // Return the file extension without the dot
-	        } else {
-	            return "";  // No extension found
-	        }
-	    }
-	
+				if (cnt < fileNamesColumn7.size()) {
+					String newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + "." + currentExtension;
+					System.out.println(newFilePath);
+					File renamedFile = new File(newFilePath);
+					System.out.println(Objects.isNull(renamedFile));
+					if (pdfFile.renameTo(renamedFile)) {
+						System.out.println("Renamed " + pdfFileName + " to " + fileNamesColumn7.get(cnt) + "." + currentExtension);
+					} else {
+						System.out.println("Failed to rename " + pdfFileName);
+					}
+					cnt++;
+				} else {
+					System.out.println("Index out of bounds for fileNamesColumn7.");
+					break;
+				}
+			} else {
+				System.out.println("File not found: " + pdfFileName);
+			}
+		}
+	}
+
+	/*====================Check the Extension===================================*/
+
+	private  static String getFileExtension(File file) {
+		String fileName = file.getName();
+		int dotIndex = fileName.lastIndexOf('.');
+		if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+			return fileName.substring(dotIndex + 1); 
+		} else {
+			return ""; 
+		}
+	}
+
 	/*====================Read PDF File Names from Column 8===================================*/
 
 	public static ArrayList<String> readPdfFileNamesFromColumn8(String filePath) {
@@ -321,37 +329,37 @@ public class ClientExcel extends MainClass{
 			e.printStackTrace();
 		}
 		pdfFileNames.remove(0);
-		System.out.println(pdfFileNames);
-		
+		//		System.out.println(pdfFileNames);
+
 		return pdfFileNames;
 	}
 
 	/*====================Check if NOA exist for that client===================================*/
-	
+
 	public static void checkNoticeOfAssessment(String filePath, String downloadDir) {
-	    ArrayList<String> subjectColumnData = ClientExcel.readSubjectColumn(filePath);  
-	    boolean found = false;  
+		ArrayList<String> subjectColumnData = ClientExcel.readSubjectColumn(filePath);  
+		boolean found = false;  
 
-	    ArrayList<String> firstColumnData = ClientExcel.readFirstColumn(filePath);
+		ArrayList<String> firstColumnData = ClientExcel.readFirstColumn(filePath);
 
-	    for (int i = 0; i < subjectColumnData.size(); i++) {
-	        String subject = subjectColumnData.get(i).trim();
-	        
-	        if (subject.toLowerCase().startsWith("notice of assessment")) {
-	            String correspondingValue = ClientExcel.readPdfFileNamesFromColumn8(filePath).get(i+1).trim();
-	            
-	            String cellFromColumn0 = firstColumnData.get(i).trim();
-	            System.out.println("Corresponding value from column 0: " + cellFromColumn0);
+		for (int i = 0; i < subjectColumnData.size(); i++) {
+			String subject = subjectColumnData.get(i).trim();
 
-	            searchPdfFilesInDownloads1(filePath, downloadDir, correspondingValue);
+			if (subject.toLowerCase().startsWith("notice of assessment")) {
+				String correspondingValue = ClientExcel.readPdfFileNamesFromColumn8(filePath).get(i+1).trim();
 
-	            found = true;  
-	        }
-	    }
+				String cellFromColumn0 = firstColumnData.get(i).trim();
+				//				System.out.println("Corresponding value from column 0: " + cellFromColumn0);
 
-	    if (!found) {
-	        System.out.println("No 'Notice of Assessment' found in the subject column.");
-	    }
+				searchPdfFilesInDownloads1(filePath, downloadDir, correspondingValue);
+
+				found = true;  
+			}
+		}
+
+		if (!found) {
+			//			System.out.println("No 'Notice of Assessment' found in the subject column.");
+		}
 	}
 
 	/*====================Search PDF Files in Downloads===================================*/
@@ -434,13 +442,11 @@ public class ClientExcel extends MainClass{
 
 	public static void main(String[] args) {
 		//		readSubjectColumn(filePath);
-//				readFileNamesFromColumn7(filePath);
+		//		readFileNamesFromColumn7(filePath);
 		//		checkNoticeOfAssessmentAndPrintIndex(filePath);
-//		readPdfFileNamesFromColumn8(filePath);
-				
-//		readSubjectColumn(filePath);
-//		renamePdfFilesInDownloads(downloadDir);
-		
-//		checkNoticeOfAssessment(filePath, downloadDir);
+		//		readPdfFileNamesFromColumn8(filePath);
+		//		readSubjectColumn(filePath);
+		//		renamePdfFilesInDownloads(downloadDir);
+		//		checkNoticeOfAssessment(filePath, downloadDir);
 	}
 }

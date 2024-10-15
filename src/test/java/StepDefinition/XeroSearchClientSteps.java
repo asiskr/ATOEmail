@@ -27,7 +27,7 @@ public class XeroSearchClientSteps extends MainClass {
 
 	@Then("I should see the client code")
 	public void i_should_see_the_client_code() {
-		search.renamePdfFilesInDownloads(downloadDir);
+		search.renameAndMovePdfFilesToDownloadsFolder(downloadDir);
 	}
 
 	@Then("I should see the client email")

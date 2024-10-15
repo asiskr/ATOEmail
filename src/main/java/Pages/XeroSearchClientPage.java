@@ -1,8 +1,12 @@
 package Pages;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -14,8 +18,8 @@ import com.asis.util.MainClass;
 import Driver_manager.DriverManager;
 
 public class XeroSearchClientPage extends MainClass {
-	public static String client ;
-	public static String subject ;
+	public static String client;
+	public static String subject;
 	public String emailText = null;
 	public String clientCodeText = null;
 
@@ -45,9 +49,7 @@ public class XeroSearchClientPage extends MainClass {
 	public void inputTheClientName() throws InterruptedException {
 		ClientExcel.clientNamesRemoval();
 		ClientExcel.readSubjectColumn(filePath);
-		//		System.out.println(clientNames.size());
-
-		for (int i = 0; i < Math.min(clientNames.size(), subjectColumnData.size()); i++) {
+		for (int i = 0; i < clientNames.size(); i++){
 			client = clientNames.get(i);
 			subject = subjectColumnData.get(i);
 			Thread.sleep(3000);
@@ -66,7 +68,7 @@ public class XeroSearchClientPage extends MainClass {
 					if (ele.getText().trim().equalsIgnoreCase(client.trim())) {
 						ele.click();
 						clientFound = true;
-						break; 
+						break;
 					}
 				}
 				if (clientFound) {
@@ -76,7 +78,6 @@ public class XeroSearchClientPage extends MainClass {
 						try {
 							wait.until(ExpectedConditions.visibilityOf(clientEmail2));
 						} catch (Exception e2) {
-							//							System.out.println("Both clientEmail and clientEmail2 are not visible. " + client);
 						}
 					}
 					wait.until(ExpectedConditions.visibilityOf(clientCode));
@@ -90,7 +91,6 @@ public class XeroSearchClientPage extends MainClass {
 						try {
 							emailText = clientEmail2.getText().trim();
 						} catch (Exception e2) {
-							//							System.out.println("Failed to retrieve email text from both clientEmail and clientEmail2.");
 						}
 					}
 
@@ -99,18 +99,16 @@ public class XeroSearchClientPage extends MainClass {
 					}
 					if (emailText != null && clientCodeText != "-") {
 						ClientExcel.addClientData(clientCodeText, emailText);
-						ClientExcel.writeCombinedDataToExcel(clientCodeText, subject );
-					} 
-					else {
+						ClientExcel.writeCombinedDataToExcel(clientCodeText, subject);
+					} else {
 						ClientExcel.addClientData("client code not found", "client email not found");
-						ClientExcel.writeCombinedDataToExcel(clientCodeText, subject );
+						ClientExcel.writeCombinedDataToExcel(clientCodeText, subject);
 						ClientExcel.saveExcelFile();
 					}
 				} else {
-
 					Thread.sleep(3000);
 					ClientExcel.addClientData("client name not found", "client name not found");
-					ClientExcel.writeCombinedDataToExcel(clientCodeText, subject );
+					ClientExcel.writeCombinedDataToExcel(clientCodeText, subject);
 					ClientExcel.saveExcelFile();
 					wait.until(ExpectedConditions.elementToBeClickable(searchButton));
 					searchButton.click();
@@ -122,13 +120,25 @@ public class XeroSearchClientPage extends MainClass {
 		}
 	}
 
-	public void renamePdfFilesInDownloads(String downloadDir) {
+	public void renameAndMovePdfFilesToDownloadsFolder(String downloadDir) {
 		ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
-		ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath); // Assuming column 7 is used for renaming
+		ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath);
 
 		if (pdfFileNames.size() != fileNamesColumn7.size()) {
 			System.out.println("Mismatch between column 8 and column 7 sizes.");
 			return;
+		}
+
+		// Create the "Downloads" folder inside the downloadDir
+		File downloadsFolder = new File(downloadDir + File.separator + "Downloads");
+		if (!downloadsFolder.exists()) {
+			boolean created = downloadsFolder.mkdir();
+			if (created) {
+				System.out.println("Downloads folder created.");
+			} else {
+				System.out.println("Failed to create Downloads folder.");
+				return;
+			}
 		}
 
 		int cnt = 0;
@@ -142,12 +152,22 @@ public class XeroSearchClientPage extends MainClass {
 				String currentExtension = getFileExtension(pdfFile);
 
 				if (cnt < fileNamesColumn7.size()) {
-					// Create a new file name with the correct extension
-					String newFilePath = downloadDir + File.separator + fileNamesColumn7.get(cnt) + "." + currentExtension;
+					String newFileName = fileNamesColumn7.get(cnt) + "." + currentExtension;
+					String newFilePath = downloadDir + File.separator + newFileName;
 					File renamedFile = new File(newFilePath);
 
 					if (pdfFile.renameTo(renamedFile)) {
-						System.out.println("Renamed " + pdfFileName + " to " + fileNamesColumn7.get(cnt) + "." + currentExtension);
+						System.out.println("Renamed " + pdfFileName + " to " + newFileName);
+
+						// Move the renamed file to the "Downloads" folder
+						File targetFile = new File(downloadsFolder + File.separator + newFileName);
+						try {
+							Files.move(renamedFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+							System.out.println("Moved " + newFileName + " to Downloads folder.");
+						} catch (IOException e) {
+							System.out.println("Failed to move " + newFileName + " to Downloads folder.");
+							e.printStackTrace();
+						}
 					} else {
 						System.out.println("Failed to rename " + pdfFileName);
 					}
@@ -162,14 +182,13 @@ public class XeroSearchClientPage extends MainClass {
 		}
 	}
 
-	// Helper method to get the file extension
 	private String getFileExtension(File file) {
 		String fileName = file.getName();
 		int dotIndex = fileName.lastIndexOf('.');
 		if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
-			return fileName.substring(dotIndex + 1);  // Return the file extension without the dot
+			return fileName.substring(dotIndex + 1);
 		} else {
-			return "";  // No extension found
+			return "";
 		}
 	}
 }
