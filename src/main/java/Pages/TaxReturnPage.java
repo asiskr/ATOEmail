@@ -35,7 +35,7 @@ public class TaxReturnPage extends MainClass {
 	private static WebElement cancel;
 	//span[contains(text(),'Cancel')]
 	//td[contains(@class,'x-grid-cell')]//i[@title='Accepted']/ancestor::a
- 
+
 	@FindBy(xpath="//label[text()='Date of issue']/following::input[1]")
 	private static WebElement dateOfIssue;
 	@FindBy(xpath="//label[text()='ATO Reference']/following::input[1]")
@@ -124,8 +124,8 @@ public class TaxReturnPage extends MainClass {
 
 	public static void processAllNoticesOfAssessment(String filePath, String downloadDir) {
 		ClientExcel.clientNamesRemoval();
-		ArrayList<String> subjectColumnData = ClientExcel.readSubjectColumn(filePath);
-//		ArrayList<String> firstColumnData = ClientExcel.readFirstColumn(filePath);
+		ClientExcel.readSubjectColumn(filePath);
+		//		ArrayList<String> firstColumnData = ClientExcel.readFirstColumn(filePath);
 		boolean found = false; // This flag is to check if any "Notice of Assessment" is found
 
 		for (int i = 0; i < subjectColumnData.size(); i++) {
@@ -154,7 +154,7 @@ public class TaxReturnPage extends MainClass {
 				catch(Exception e) {
 					// Now, check for the corresponding PDF file in downloads
 					String pdfFileName = ClientExcel.readPdfFileNamesFromColumn8(filePath).get(i + 1).trim();
-//					searchAndExtractPdfData(filePath, downloadDir, pdfFileName);
+					//					searchAndExtractPdfData(filePath, downloadDir, pdfFileName);
 				}
 			}
 		}
@@ -163,7 +163,7 @@ public class TaxReturnPage extends MainClass {
 		}
 	}
 
-	
+
 	public static HashMap<String, String> readPdfFile(String pdfFilePath) {
 		File pdfFile = new File(pdfFilePath);
 		HashMap<String, String> extractedData = new HashMap<>();
@@ -185,9 +185,9 @@ public class TaxReturnPage extends MainClass {
 					String dateOfIssue = dateMatcher.group(1);
 					extractedData.put("Date of Issue", dateOfIssue);
 				}
-				 else {
-						extractedData.put("Date of Issue", "0.0");
-				 }
+				else {
+					extractedData.put("Date of Issue", "0.0");
+				}
 
 				// Extract Reference Number
 				Pattern refPattern = Pattern.compile("Our reference\\s*(\\d{3} \\d{3} \\d{3} \\d{4})");
@@ -196,9 +196,9 @@ public class TaxReturnPage extends MainClass {
 					String referenceNumber = refMatcher.group(1);
 					extractedData.put("Reference Number", referenceNumber);
 				}
-				 else {
-						extractedData.put("Reference Number", "0.0");
-				 }
+				else {
+					extractedData.put("Reference Number", "0.0");
+				}
 
 				// Extract Taxable Income
 				Pattern incomePattern = Pattern.compile("Your taxable income is \\$([\\d,]+)");
@@ -207,9 +207,9 @@ public class TaxReturnPage extends MainClass {
 					String taxableIncome = incomeMatcher.group(1).replace(",", "");
 					extractedData.put("Taxable Income", taxableIncome);
 				}
-				 else {
-						extractedData.put("Taxable Income", "0.0");
-				 }
+				else {
+					extractedData.put("Taxable Income", "0.0");
+				}
 
 				// Extract Result of the Notice
 				Pattern resultPattern = Pattern.compile("Result of this notice\\s+(\\S+ \\S+)");

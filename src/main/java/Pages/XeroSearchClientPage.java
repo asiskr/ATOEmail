@@ -49,7 +49,10 @@ public class XeroSearchClientPage extends MainClass {
 	public void inputTheClientName() throws InterruptedException {
 		ClientExcel.clientNamesRemoval();
 		ClientExcel.readSubjectColumn(filePath);
+		System.out.println(clientNames.size());
+		System.out.println(subjectColumnData.size());
 		for (int i = 0; i < clientNames.size(); i++){
+			
 			client = clientNames.get(i);
 			subject = subjectColumnData.get(i);
 			Thread.sleep(3000);

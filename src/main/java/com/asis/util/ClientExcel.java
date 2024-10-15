@@ -23,10 +23,11 @@ public class ClientExcel extends MainClass{
 	private static int currentRowNum = 1;
 	private static int currentRowNum2 = 1;
 	private static int currentRowNum3 = 1;
+	public static ArrayList<String> subjectColumnData = new ArrayList<>();
 
 	/*====================Creation of Empty Excel Sheet===================================*/
 
-	public void createEmptyExcelSheet() {
+	public static void createEmptyExcelSheet() {
 		workbook = new HSSFWorkbook();
 		sheet = workbook.createSheet("Client Data");
 
@@ -36,6 +37,7 @@ public class ClientExcel extends MainClass{
 		for (int i = 0; i < headers.length; i++) {
 			Cell cell = headerRow.createCell(i);  
 			cell.setCellValue(headers[i]); 
+			System.out.println("Craeting ");
 		}
 	}
 
@@ -43,6 +45,7 @@ public class ClientExcel extends MainClass{
 
 	public static ArrayList<ArrayList<String>> writeDataToExcel(ArrayList<ArrayList<String>> data) {
 		if (sheet == null) {
+			System.out.println("dashda");
 			return data;
 		}
 		int rowNum = 1;
@@ -54,12 +57,13 @@ public class ClientExcel extends MainClass{
 				cell.setCellValue(cellData);
 			}
 		}
+		System.out.println("dfbshf");
 		return data;
 	}
 	/*====================Read Of First Column===================================*/
 
 	public static ArrayList<String> readFirstColumn(String filePath) {
-		ArrayList<String> firstColumnData = new ArrayList<>();
+		ArrayList<String >firstColumnData = new ArrayList<>();
 
 		try (FileInputStream fis = new FileInputStream(new File(filePath));
 				Workbook workbook = WorkbookFactory.create(fis)) {
@@ -80,9 +84,9 @@ public class ClientExcel extends MainClass{
 
 	/*====================Removal of Last character of client name ===================================*/
 
-	public static void clientNamesRemoval() {
+	public static ArrayList<String>  clientNamesRemoval() {
 		String filePath = "ClientData.xls"; 
-		ArrayList<String> firstColumn = readFirstColumn(filePath); 
+		firstColumn = readFirstColumn(filePath); 
 
 		for (int cnt = 0; cnt < firstColumn.size(); cnt++) {
 			String clientName = firstColumn.get(cnt).trim(); 
@@ -99,6 +103,7 @@ public class ClientExcel extends MainClass{
 				clientNames.add(clientName); 
 			}
 		}
+		return clientNames;
 	}
 
 	/*====================Formating of the client name data===================================*/
@@ -201,7 +206,7 @@ public class ClientExcel extends MainClass{
 	/*====================Read Of Subject Column===================================*/
 
 	public static ArrayList<String> readSubjectColumn(String filePath) {
-		ArrayList<String> subjectColumnData = new ArrayList<>();
+		//		subjectColumnData = new ArrayList<>();
 
 		try (FileInputStream fis = new FileInputStream(new File(filePath));
 				Workbook workbook = WorkbookFactory.create(fis)) {
@@ -236,7 +241,7 @@ public class ClientExcel extends MainClass{
 	/*====================Read PDF File Names from Column 7===================================*/
 
 	public static ArrayList<String> readFileNamesFromColumn7(String filePath) {
-		ArrayList<String> fileNamesColumn7 = new ArrayList<>();
+		fileNamesColumn7 = new ArrayList<>();
 		HashSet<String> uniqueFileNames = new HashSet<>();
 
 		try (FileInputStream fis = new FileInputStream(new File(filePath));
@@ -272,8 +277,8 @@ public class ClientExcel extends MainClass{
 	/*====================Renaming the PDF file===================================*/
 
 	public static void renamePdfFilesInDownloads(String downloadDir) {
-		ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
-		ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath); // Assuming column 7 is used for renaming
+		pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
+		fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath); // Assuming column 7 is used for renaming
 
 		if (pdfFileNames.size() != fileNamesColumn7.size()) {
 			//			System.out.println("Mismatch between column 8 and column 7 sizes.");
@@ -326,7 +331,7 @@ public class ClientExcel extends MainClass{
 	/*====================Read PDF File Names from Column 8===================================*/
 
 	public static ArrayList<String> readPdfFileNamesFromColumn8(String filePath) {
-		ArrayList<String> pdfFileNames = new ArrayList<>();
+		pdfFileNames = new ArrayList<>();
 
 		try (FileInputStream fis = new FileInputStream(new File(filePath));
 				Workbook workbook = WorkbookFactory.create(fis)) {
@@ -351,7 +356,7 @@ public class ClientExcel extends MainClass{
 	/*====================Check if NOA exist for that client===================================*/
 
 	public static void checkNoticeOfAssessment(String filePath, String downloadDir) {
-		ArrayList<String> subjectColumnData = ClientExcel.readSubjectColumn(filePath);  
+		ClientExcel.readSubjectColumn(filePath);  
 		boolean found = false;  
 
 		ArrayList<String> firstColumnData = ClientExcel.readFirstColumn(filePath);
@@ -462,6 +467,8 @@ public class ClientExcel extends MainClass{
 
 		//		readSubjectColumn(filePath);
 		//		renamePdfFilesInDownloads(downloadDir);
+		createEmptyExcelSheet()
+		;		writeDataToExcel(ACTIVITY_STATEMENT_DATA2);
 		readFileNamesFromColumn7(filePath);
 		//		checkNoticeOfAssessment(filePath, downloadDir);
 	}

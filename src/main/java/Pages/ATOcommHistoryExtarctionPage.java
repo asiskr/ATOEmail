@@ -47,7 +47,7 @@ public class ATOcommHistoryExtarctionPage extends MainClass {
 		yesPopUp.click();
 	}
 	public ArrayList<ArrayList<String>> extractCommTableStatement() throws InterruptedException {
-		creator.createEmptyExcelSheet(); 
+		ClientExcel.createEmptyExcelSheet(); 
 		Thread.sleep(5000);
 		for (WebElement tr : commTableHistory) {
 			if (tr.isDisplayed()) {
@@ -61,7 +61,7 @@ public class ATOcommHistoryExtarctionPage extends MainClass {
 				ACTIVITY_STATEMENT_DATA.add(tdRowData);
 			}
 		}
-//		System.out.println(ACTIVITY_STATEMENT_DATA);
+		System.out.println(ACTIVITY_STATEMENT_DATA);
 		ClientExcel.writeDataToExcel(ACTIVITY_STATEMENT_DATA);
 		return ACTIVITY_STATEMENT_DATA;
 	}

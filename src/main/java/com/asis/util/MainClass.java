@@ -21,8 +21,8 @@ public class MainClass {
 	public static String filePath = "ClientData.xls"; 
 	public static String name;
 
-	public static ArrayList<String> firstColumn = ClientExcel.readFirstColumn(filePath);
-	public static ArrayList<String> clientNames = new ArrayList<>();
+	public static ArrayList<String> firstColumn;
+	public static ArrayList<String> clientNames = ClientExcel.clientNamesRemoval();
 	public static ArrayList<String> fileNames = new ArrayList<>();
 	public static List<String> clientCodes = new ArrayList<>();
 	public static List<String> clientEmails = new ArrayList<>();
