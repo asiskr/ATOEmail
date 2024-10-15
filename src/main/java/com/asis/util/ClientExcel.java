@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -236,24 +237,37 @@ public class ClientExcel extends MainClass{
 
 	public static ArrayList<String> readFileNamesFromColumn7(String filePath) {
 		ArrayList<String> fileNamesColumn7 = new ArrayList<>();
+		HashSet<String> uniqueFileNames = new HashSet<>();
 
 		try (FileInputStream fis = new FileInputStream(new File(filePath));
 				Workbook workbook = WorkbookFactory.create(fis)) {
 
 			Sheet sheet = workbook.getSheetAt(0);
 			for (Row row : sheet) {
-				Cell cell = row.getCell(7);
+				Cell cell = row.getCell(7); 
 				if (cell != null && cell.getCellType() == CellType.STRING) {
-					fileNamesColumn7.add(cell.getStringCellValue());
+					String fileName = cell.getStringCellValue().trim(); 
+					String originalFileName = fileName;
+
+					int count = 1;
+					while (uniqueFileNames.contains(fileName)) {
+						fileName = originalFileName + "_new" +count ;
+						count++;
+					}
+
+					fileNamesColumn7.add(fileName);
+					uniqueFileNames.add(fileName);
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		fileNamesColumn7.remove(0);
-		//		System.out.println(fileNamesColumn7);
+
+		fileNamesColumn7.remove(0);	    
+		System.out.println(fileNamesColumn7);
 		return fileNamesColumn7;
 	}
+
 
 	/*====================Renaming the PDF file===================================*/
 
@@ -442,11 +456,13 @@ public class ClientExcel extends MainClass{
 
 	public static void main(String[] args) {
 		//		readSubjectColumn(filePath);
-		//		readFileNamesFromColumn7(filePath);
+		//				readFileNamesFromColumn7(filePath);
 		//		checkNoticeOfAssessmentAndPrintIndex(filePath);
 		//		readPdfFileNamesFromColumn8(filePath);
+
 		//		readSubjectColumn(filePath);
 		//		renamePdfFilesInDownloads(downloadDir);
+		readFileNamesFromColumn7(filePath);
 		//		checkNoticeOfAssessment(filePath, downloadDir);
 	}
 }
