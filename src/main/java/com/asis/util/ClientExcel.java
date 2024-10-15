@@ -37,6 +37,7 @@ public class ClientExcel extends MainClass{
 			Cell cell = headerRow.createCell(i);  
 			cell.setCellValue(headers[i]); 
 		}
+		System.out.println("Creating");
 	}
 
 	/*====================Table Extraction and Putting data into Excel===================================*/
@@ -54,6 +55,7 @@ public class ClientExcel extends MainClass{
 				cell.setCellValue(cellData);
 			}
 		}
+		
 		return data;
 	}
 	/*====================Read Of First Column===================================*/
@@ -201,27 +203,30 @@ public class ClientExcel extends MainClass{
 	/*====================Read Of Subject Column===================================*/
 
 	public static ArrayList<String> readSubjectColumn(String filePath) {
-		ArrayList<String> subjectColumnData = new ArrayList<>();
+	    subjectColumnData = new ArrayList<>();
 
-		try (FileInputStream fis = new FileInputStream(new File(filePath));
-				Workbook workbook = WorkbookFactory.create(fis)) {
+	    try (FileInputStream fis = new FileInputStream(new File(filePath));
+	         Workbook workbook = WorkbookFactory.create(fis)) {
 
-			Sheet sheet = workbook.getSheetAt(0);
-			for (Row row : sheet) {
-				Cell cell = row.getCell(2); 
-				if (cell != null && cell.getCellType() == CellType.STRING) {
-					String subject = cell.getStringCellValue();
-					subject = replaceSpecialCharacters(subject);
-					subjectColumnData.add(subject);
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		subjectColumnData.remove(0); 
-		//		System.out.println(subjectColumnData);
-		return subjectColumnData;
+	        Sheet sheet = workbook.getSheetAt(0);
+	        for (Row row : sheet) {
+	            Cell cell = row.getCell(2); 
+	            if (cell != null && cell.getCellType() == CellType.STRING) {
+	                String subject = cell.getStringCellValue();
+	                subject = replaceSpecialCharacters(subject); 
+	                subjectColumnData.add(subject);
+	            }
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	    if (!subjectColumnData.isEmpty()) {
+	        subjectColumnData.remove(0);
+	    }
+
+	    return subjectColumnData; 
 	}
+
 
 	/*====================Replace special character===================================*/
 
