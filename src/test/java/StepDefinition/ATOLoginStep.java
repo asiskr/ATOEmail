@@ -15,6 +15,7 @@ public class ATOLoginStep extends MainClass {
 		loginPage = new ATOLoginPage();
 
 		launchSite("https://onlineservices.ato.gov.au/onlineservices/");
+		initializeClientData();
 		loginPage.clickOnMyGOVButton();
 		loginPage.sendingEmailAddress();
 		loginPage.clickOnLoginButton();
@@ -27,7 +28,7 @@ public class ATOLoginStep extends MainClass {
 	public void send_sc() {
 		// This method is no longer needed here since sending email is handled in each scenario
 	}
-/*
+	/*
 	private void sendScreenshotEmail(String recipientEmail, byte[] screenshotBytes) {
 		String from = "toptechautomation@theoutsourcepro.com.au";
 		String password = "Duz30077";

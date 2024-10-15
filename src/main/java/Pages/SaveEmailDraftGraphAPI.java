@@ -50,10 +50,10 @@ public class SaveEmailDraftGraphAPI extends MainClass{
 							if (fileToAttach.exists()) {
 								saveEmailAsDraft(email, subject, filePathToSearch, downloadsDir); 
 							} else {
-								System.err.println("File not found: " + fileToAttach.getAbsolutePath());
+//								System.err.println("File not found: " + fileToAttach.getAbsolutePath());
 							}
 						} else {
-							System.err.println("Invalid or missing email address for row " + rowIndex);
+//							System.err.println("Invalid or missing email address for row " + rowIndex);
 						}
 					}
 				}

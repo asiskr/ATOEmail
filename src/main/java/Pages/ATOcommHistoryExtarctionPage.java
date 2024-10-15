@@ -61,13 +61,11 @@ public class ATOcommHistoryExtarctionPage extends MainClass {
 				ACTIVITY_STATEMENT_DATA.add(tdRowData);
 			}
 		}
-//		System.out.println(ACTIVITY_STATEMENT_DATA);
 		ClientExcel.writeDataToExcel(ACTIVITY_STATEMENT_DATA);
 		return ACTIVITY_STATEMENT_DATA;
 	}
 
 	public void clickAllLinks() throws InterruptedException {
-//		String downloadDir = "C:\\Users\\test\\Downloads";
 
 		wait.until(ExpectedConditions.visibilityOfAllElements(links));
 
@@ -94,9 +92,9 @@ public class ATOcommHistoryExtarctionPage extends MainClass {
 			name = latestFile.getName();
 			ClientExcel.addPdfName(name);
 			//			ClientExcel.saveExcelFile();
-//			System.out.println("Downloaded file saved as: " + name);
+			//			System.out.println("Downloaded file saved as: " + name);
 		} else {
-//			System.out.println("No files found in the directory.");
+			//			System.out.println("No files found in the directory.");
 		}
 	}
 	public void closeBrowser() {

@@ -49,18 +49,28 @@ public class XeroSearchClientPage extends MainClass {
 	public void inputTheClientName() throws InterruptedException {
 		ClientExcel.clientNamesRemoval();
 		ClientExcel.readSubjectColumn(filePath);
-		for (int i = 0; i < clientNames.size(); i++){
+		int size = Math.min(clientNames.size(), subjectColumnData.size());
+		System.out.println(clientNames.size());
+		System.out.println(subjectColumnData.size());
+		for (int i = 0; i < size; i++) {
 			client = clientNames.get(i);
 			subject = subjectColumnData.get(i);
 			Thread.sleep(3000);
 			wait.until(ExpectedConditions.elementToBeClickable(searchButton));
 			searchButton.click();
 			Thread.sleep(2000);
-			wait.until(ExpectedConditions.elementToBeClickable(inputBox));
-			inputBox.clear();
-			inputBox.sendKeys(client);
-			Thread.sleep(3000);
-
+			try {
+				wait.until(ExpectedConditions.elementToBeClickable(inputBox));
+				inputBox.clear();
+				inputBox.sendKeys(client);
+				Thread.sleep(3000);
+			}
+			catch(Exception e) {
+				wait.until(ExpectedConditions.elementToBeClickable(inputBox));
+				inputBox.clear();
+				inputBox.sendKeys(client);
+				Thread.sleep(3000);
+			}
 			try {
 				List<WebElement> elements = DriverManager.getDriver().findElements(By.xpath("//a"));
 				boolean clientFound = false;
@@ -121,72 +131,72 @@ public class XeroSearchClientPage extends MainClass {
 	}
 
 	public void renameAndMovePdfFilesToDownloadsFolder(String downloadDir) {
-	    ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
-	    ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath);
+		ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
+		ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath);
 
-	    if (pdfFileNames.size() != fileNamesColumn7.size()) {
-	        System.out.println("Mismatch between column 8 and column 7 sizes.");
-	        return;
-	    }
+		if (pdfFileNames.size() != fileNamesColumn7.size()) {
+			//	        System.out.println("Mismatch between column 8 and column 7 sizes.");
+			return;
+		}
 
-	    File downloadsFolder = new File(downloadDir + File.separator + "Downloads");
-	    if (!downloadsFolder.exists()) {
-	        boolean created = downloadsFolder.mkdir();
-	        if (created) {
-	            System.out.println("Downloads folder created.");
-	        } else {
-	            System.out.println("Failed to create Downloads folder.");
-	            return;
-	        }
-	    }
+		File downloadsFolder = new File(downloadDir + File.separator + "Downloads");
+		if (!downloadsFolder.exists()) {
+			boolean created = downloadsFolder.mkdir();
+			if (created) {
+				//	            System.out.println("Downloads folder created.");
+			} else {
+				//	            System.out.println("Failed to create Downloads folder.");
+				return;
+			}
+		}
 
-	    int cnt = 0;
-	    for (String pdfFileName : pdfFileNames) {
-	        String fullPath = downloadDir + File.separator + pdfFileName.trim();
-	        File pdfFile = new File(fullPath);
+		int cnt = 0;
+		for (String pdfFileName : pdfFileNames) {
+			String fullPath = downloadDir + File.separator + pdfFileName.trim();
+			File pdfFile = new File(fullPath);
 
-	        if (pdfFile.exists()) {
-	            System.out.println("Found: " + pdfFileName);
+			if (pdfFile.exists()) {
+				System.out.println("Found: " + pdfFileName);
 
-	            String currentExtension = getFileExtension(pdfFile);
+				String currentExtension = getFileExtension(pdfFile);
 
-	            if (cnt < fileNamesColumn7.size()) {
-	                String newFileName = fileNamesColumn7.get(cnt) + "." + currentExtension;
-	                String newFilePath = downloadDir + File.separator + newFileName;
-	                File renamedFile = new File(newFilePath);
+				if (cnt < fileNamesColumn7.size()) {
+					String newFileName = fileNamesColumn7.get(cnt) + "." + currentExtension;
+					String newFilePath = downloadDir + File.separator + newFileName;
+					File renamedFile = new File(newFilePath);
 
-	                int fileCount = 1; 
-	                while (renamedFile.exists()) {
-	                    newFileName = "new_" + fileNamesColumn7.get(cnt) + "_" + fileCount + "." + currentExtension;
-	                    renamedFile = new File(downloadDir + File.separator + newFileName);
-	                    fileCount++;
-	                }
+					int fileCount = 1; 
+					while (renamedFile.exists()) {
+						newFileName = "new_" + fileNamesColumn7.get(cnt) + "_" + fileCount + "." + currentExtension;
+						renamedFile = new File(downloadDir + File.separator + newFileName);
+						fileCount++;
+					}
 
-	                System.out.println("Renaming file to: " + newFileName);
+					//	                System.out.println("Renaming file to: " + newFileName);
 
-	                if (pdfFile.renameTo(renamedFile)) {
-	                    System.out.println("Renamed " + pdfFileName + " to " + newFileName);
+					if (pdfFile.renameTo(renamedFile)) {
+						//	                    System.out.println("Renamed " + pdfFileName + " to " + newFileName);
 
-	                    File targetFile = new File(downloadsFolder + File.separator + newFileName);
-	                    try {
-	                        Files.move(renamedFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-	                        System.out.println("Moved " + newFileName + " to Downloads folder.");
-	                    } catch (IOException e) {
-	                        System.out.println("Failed to move " + newFileName + " to Downloads folder.");
-	                        e.printStackTrace();
-	                    }
-	                } else {
-	                    System.out.println("Failed to rename " + pdfFileName);
-	                }
-	                cnt++;
-	            } else {
-	                System.out.println("Index out of bounds for fileNamesColumn7.");
-	                break;
-	            }
-	        } else {
-	            System.out.println("File not found: " + pdfFileName);
-	        }
-	    }
+						File targetFile = new File(downloadsFolder + File.separator + newFileName);
+						try {
+							Files.move(renamedFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+							//	                        System.out.println("Moved " + newFileName + " to Downloads folder.");
+						} catch (IOException e) {
+							//	                        System.out.println("Failed to move " + newFileName + " to Downloads folder.");
+							e.printStackTrace();
+						}
+					} else {
+						//	                    System.out.println("Failed to rename " + pdfFileName);
+					}
+					cnt++;
+				} else {
+					//	                System.out.println("Index out of bounds for fileNamesColumn7.");
+					break;
+				}
+			} else {
+				//	            System.out.println("File not found: " + pdfFileName);
+			}
+		}
 	}
 
 	private String getFileExtension(File file) {
