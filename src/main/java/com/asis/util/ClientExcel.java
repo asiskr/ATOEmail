@@ -75,7 +75,7 @@ public class ClientExcel extends MainClass{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println(firstColumnData);
+		//		System.out.println(firstColumnData);
 		return firstColumnData;
 	} 
 
@@ -265,7 +265,7 @@ public class ClientExcel extends MainClass{
 		}
 
 		fileNamesColumn7.remove(0);	    
-		System.out.println(fileNamesColumn7);
+		//		System.out.println(fileNamesColumn7);
 		return fileNamesColumn7;
 	}
 
@@ -310,7 +310,7 @@ public class ClientExcel extends MainClass{
 				System.out.println("File not found: " + pdfFileName);
 			}
 		}
-		
+
 	}
 
 	/*====================Check the Extension===================================*/
@@ -464,7 +464,7 @@ public class ClientExcel extends MainClass{
 
 		//		readSubjectColumn(filePath);
 		//		renamePdfFilesInDownloads(downloadDir);
-		readFileNamesFromColumn7(filePath);
+		//		readFileNamesFromColumn7(filePath);
 		//		checkNoticeOfAssessment(filePath, downloadDir);
 	}
 }
