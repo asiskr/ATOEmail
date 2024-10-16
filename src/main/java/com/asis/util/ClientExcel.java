@@ -100,7 +100,7 @@ public class ClientExcel extends MainClass{
 				clientName = capitalizeName(clientName);
 				
 				clientNames.add(clientName); 
-				
+				saveExcelFile();
 			}
 			
 		}
