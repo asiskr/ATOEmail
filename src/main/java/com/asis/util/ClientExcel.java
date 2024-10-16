@@ -41,12 +41,12 @@ public class ClientExcel extends MainClass{
 
 	/*====================Table Extraction and Putting data into Excel===================================*/
 
-	public static ArrayList<ArrayList<String>> writeDataToExcel(ArrayList<ArrayList<String>> data) {
+	public static ArrayList<ArrayList<String>> writeDataToExcel(ArrayList<ArrayList<String>> ACTIVITY_STATEMENT_DATA) {
 		if (sheet == null) {
-			return data;
+			return ACTIVITY_STATEMENT_DATA;
 		}
 		int rowNum = 1;
-		for (ArrayList<String> rowData : data) {
+		for (ArrayList<String> rowData : ACTIVITY_STATEMENT_DATA) {
 			Row row = sheet.createRow(rowNum++);
 			int colNum = 0;
 			for (String cellData : rowData) {
@@ -54,52 +54,50 @@ public class ClientExcel extends MainClass{
 				cell.setCellValue(cellData);
 			}
 		}
-		return data;
+		saveExcelFile();
+		return ACTIVITY_STATEMENT_DATA;
+		
 	}
-	/*====================Read Of First Column===================================*/
-
+	/*====================Read First Column===================================*/
 	public static ArrayList<String> readFirstColumn(String filePath) {
-		ArrayList<String> firstColumnData = new ArrayList<>();
+	     firstColumnData = new ArrayList<>();  // Create an ArrayList to store the column data
 
-		try (FileInputStream fis = new FileInputStream(new File(filePath));
-				Workbook workbook = WorkbookFactory.create(fis)) {
+	    try (FileInputStream fis = new FileInputStream(new File(filePath));
+	         Workbook workbook = WorkbookFactory.create(fis)) {
 
-			Sheet sheet = workbook.getSheetAt(0);
-			for (Row row : sheet) {
-				Cell cell = row.getCell(0); 
-				if (cell != null && cell.getCellType() == CellType.STRING) {
-					firstColumnData.add(cell.getStringCellValue());
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println(firstColumnData);
-		return firstColumnData;
-	} 
-
-	/*====================Removal of Last character of client name ===================================*/
-
-	public static void clientNamesRemoval() {
-		String filePath = "ClientData.xls"; 
-		ArrayList<String> firstColumn = readFirstColumn(filePath); 
-
-		for (int cnt = 0; cnt < firstColumn.size(); cnt++) {
-			String clientName = firstColumn.get(cnt).trim(); 
-
-			if (cnt > 0) {
-				int length = clientName.length();
-				if (length > 2 && clientName.charAt(length - 2) == ' ' 
-						&& Character.isLetter(clientName.charAt(length - 1))) {
-					clientName = clientName.substring(0, length - 2);
-				}
-				clientName = formatCommaSeparatedName(clientName);
-				clientName = capitalizeName(clientName);
-				//	            System.out.println(clientName);
-				clientNames.add(clientName); 
-			}
-		}
+	        Sheet sheet = workbook.getSheetAt(0);  // Get the first sheet of the Excel file
+	        for (Row row : sheet) {
+	            Cell cell = row.getCell(0);  // Get the first column's cell
+	            if (cell != null && cell.getCellType() == CellType.STRING) {
+	                firstColumnData.add(cell.getStringCellValue());  // Add the cell's value to the list if it's a string
+	            }
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();  // Print the error if there's an issue reading the file
+	    }
+	    System.out.println(firstColumnData);  // Print the column data for debugging
+	    saveExcelFile();
+	    return firstColumnData;  // Return the list of first column data
 	}
+
+	/*====================Removal of Last character of client name===================================*/
+	public static void clientNamesRemoval(ArrayList<String> firstColumnData) {
+	    for (int cnt = 0; cnt < firstColumnData.size(); cnt++) {
+	        String clientName = firstColumnData.get(cnt).trim(); 
+	        if (cnt > 0) {
+	            int length = clientName.length();
+	            if (length > 2 && clientName.charAt(length - 2) == ' ' 
+	                    && Character.isLetter(clientName.charAt(length - 1))) {
+	                clientName = clientName.substring(0, length - 2);  // Remove the last two characters (space + letter)
+	            }
+	            clientName = formatCommaSeparatedName(clientName);  // Format the name if it contains a comma
+	            clientName = capitalizeName(clientName);  // Capitalize the name
+	            clientNames.add(clientName);  // Add the formatted name to the final list
+	        }
+	    }
+	    saveExcelFile();
+	}
+
 
 	/*====================Formating of the client name data===================================*/
 
@@ -201,7 +199,7 @@ public class ClientExcel extends MainClass{
 	/*====================Read Of Subject Column===================================*/
 
 	public static ArrayList<String> readSubjectColumn(String filePath) {
-		ArrayList<String> subjectColumnData = new ArrayList<>();
+		subjectColumnData = new ArrayList<>();
 
 		try (FileInputStream fis = new FileInputStream(new File(filePath));
 				Workbook workbook = WorkbookFactory.create(fis)) {
@@ -462,6 +460,7 @@ public class ClientExcel extends MainClass{
 
 		//		readSubjectColumn(filePath);
 		//		renamePdfFilesInDownloads(downloadDir);
+		readFirstColumn(filePath);
 		readFileNamesFromColumn7(filePath);
 		//		checkNoticeOfAssessment(filePath, downloadDir);
 	}

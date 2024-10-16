@@ -40,6 +40,10 @@ public class ATOcommHistoryExtarctionPage extends MainClass {
 	public void clickDownloadButton() throws InterruptedException {
 		wait.until(ExpectedConditions.elementToBeClickable(download));
 		Thread.sleep(9000);
+//		clientNames.clear(); 
+//		subjectColumnData.clear();
+		System.out.println(clientNames);
+		System.out.println(subjectColumnData);
 		download.click();
 	}
 	public void clickPopUp() {
@@ -61,7 +65,7 @@ public class ATOcommHistoryExtarctionPage extends MainClass {
 				ACTIVITY_STATEMENT_DATA.add(tdRowData);
 			}
 		}
-//		System.out.println(ACTIVITY_STATEMENT_DATA);
+		System.out.println(ACTIVITY_STATEMENT_DATA);
 		ClientExcel.writeDataToExcel(ACTIVITY_STATEMENT_DATA);
 		return ACTIVITY_STATEMENT_DATA;
 	}

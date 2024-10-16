@@ -123,7 +123,7 @@ public class TaxReturnPage extends MainClass {
 
 
 	public static void processAllNoticesOfAssessment(String filePath, String downloadDir) {
-		ClientExcel.clientNamesRemoval();
+		ClientExcel.clientNamesRemoval(firstColumnData);
 		ArrayList<String> subjectColumnData = ClientExcel.readSubjectColumn(filePath);
 //		ArrayList<String> firstColumnData = ClientExcel.readFirstColumn(filePath);
 		boolean found = false; // This flag is to check if any "Notice of Assessment" is found

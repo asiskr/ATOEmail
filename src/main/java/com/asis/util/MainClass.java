@@ -21,12 +21,13 @@ public class MainClass {
 	public static String filePath = "ClientData.xls"; 
 	public static String name;
 
-	public static ArrayList<String> firstColumn = ClientExcel.readFirstColumn(filePath);
+	public static ArrayList<String> firstColumn ;
+	public static ArrayList<String> firstColumnData = new ArrayList<>();
 	public static ArrayList<String> clientNames = new ArrayList<>();
 	public static ArrayList<String> fileNames = new ArrayList<>();
 	public static List<String> clientCodes = new ArrayList<>();
 	public static List<String> clientEmails = new ArrayList<>();
-	public static ArrayList<String> subjectColumnData = ClientExcel.readSubjectColumn(filePath);
+	public static ArrayList<String> subjectColumnData  = new ArrayList<>();;
 	public static ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
 	public static ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath);
 
@@ -77,6 +78,7 @@ public class MainClass {
 		DriverManager.getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
 		wait = new WebDriverWait(DriverManager.getDriver(), Duration.ofSeconds(30));
 		js = (JavascriptExecutor) DriverManager.getDriver();
+		
 	}
 
 	/*====================Close Browser===================================*/
