@@ -49,7 +49,6 @@ public class TaxReturnPage extends MainClass {
 		PageFactory.initElements(DriverManager.getDriver(), this); 
 	}
 
-	// Click methods
 	public static void clickTaxButton() {
 		wait.until(ExpectedConditions.elementToBeClickable(tax));
 		tax.click();
@@ -81,21 +80,25 @@ public class TaxReturnPage extends MainClass {
 
 	public static void clickDateButton(String dateOfIssue1) {
 		wait.until(ExpectedConditions.elementToBeClickable(dateOfIssue));
+		dateOfIssue.clear();
 		dateOfIssue.sendKeys(dateOfIssue1);
 	}
 
 	public static void clickAtoRefButton(String referenceNumber) {
 		wait.until(ExpectedConditions.elementToBeClickable(atoRef));
+		atoRef.clear();
 		atoRef.sendKeys(referenceNumber);
 	}
 
 	public static void clickTaxableIncomeButton(String taxableIncome1) {
 		wait.until(ExpectedConditions.elementToBeClickable(taxableIncome));
+		taxableIncome.clear();
 		taxableIncome.sendKeys(taxableIncome1);
 	}
 
 	public static void clickPayableRefundableButton(String resultAmount) {
 		wait.until(ExpectedConditions.elementToBeClickable(payableRefundable));
+		payableRefundable.clear();
 		payableRefundable.sendKeys(resultAmount);
 	}
 	public static void searchAndExtractPdfData(String filePath, String downloadDir, String pdfFileName) throws InterruptedException {
@@ -124,22 +127,19 @@ public class TaxReturnPage extends MainClass {
 
 	public static void processAllNoticesOfAssessment(String filePath, String downloadDir) {
 		ClientExcel.clientNamesRemoval();
-		ArrayList<String> subjectColumnData = ClientExcel.readSubjectColumn(filePath);
-//		ArrayList<String> firstColumnData = ClientExcel.readFirstColumn(filePath);
-		boolean found = false; // This flag is to check if any "Notice of Assessment" is found
+		System.out.println("client name in tax method before " + clientNames.size());
+		subjectColumnData = ClientExcel.readSubjectColumn(filePath);
+		boolean found = false; 
 
 		for (int i = 0; i < subjectColumnData.size(); i++) {
 			String subject = subjectColumnData.get(i).trim();
 
-			// Check if the subject is "Notice of Assessment"
 			if (subject.toLowerCase().startsWith("notice of assessment")) {
-				found = true; // Set flag to true once we find a match
+				found = true; 
 
-				// Get the client name from the first column
 				String clientName = clientNames.get(i).trim();
 				System.out.println("Processing Client: " + clientName);
 
-				// Perform button clicks and search operations based on the client name
 				clickTaxButton();
 				clickReturnsButton();
 				clickFilledButton();
@@ -150,17 +150,20 @@ public class TaxReturnPage extends MainClass {
 					searchAndExtractPdfData(filePath,downloadDir,pdfFileName);
 					Thread.sleep(10000);
 					clickCancelButton();
+					
 				}
 				catch(Exception e) {
-					// Now, check for the corresponding PDF file in downloads
 					String pdfFileName = ClientExcel.readPdfFileNamesFromColumn8(filePath).get(i + 1).trim();
-//					searchAndExtractPdfData(filePath, downloadDir, pdfFileName);
+
 				}
 			}
 		}
 		if (!found) {
 			System.out.println("No 'Notice of Assessment' found in the subject column.");
 		}
+		System.out.println("client name in tax method after " + clientNames.size());
+//		clientNames.clear();
+		System.out.println("client name in tax method after clearing it " + clientNames.size());
 	}
 
 	
@@ -178,7 +181,6 @@ public class TaxReturnPage extends MainClass {
 				PDFTextStripper pdfStripper = new PDFTextStripper();
 				String pdfText = pdfStripper.getText(document);
 
-				// Extract Date of Issue
 				Pattern datePattern = Pattern.compile("Date of issue\\s*(\\d{2} \\w+ \\d{4})");
 				Matcher dateMatcher = datePattern.matcher(pdfText);
 				if (dateMatcher.find()) {
@@ -189,7 +191,6 @@ public class TaxReturnPage extends MainClass {
 						extractedData.put("Date of Issue", "0.0");
 				 }
 
-				// Extract Reference Number
 				Pattern refPattern = Pattern.compile("Our reference\\s*(\\d{3} \\d{3} \\d{3} \\d{4})");
 				Matcher refMatcher = refPattern.matcher(pdfText);
 				if (refMatcher.find()) {
@@ -200,7 +201,6 @@ public class TaxReturnPage extends MainClass {
 						extractedData.put("Reference Number", "0.0");
 				 }
 
-				// Extract Taxable Income
 				Pattern incomePattern = Pattern.compile("Your taxable income is \\$([\\d,]+)");
 				Matcher incomeMatcher = incomePattern.matcher(pdfText);
 				if (incomeMatcher.find()) {
@@ -211,7 +211,6 @@ public class TaxReturnPage extends MainClass {
 						extractedData.put("Taxable Income", "0.0");
 				 }
 
-				// Extract Result of the Notice
 				Pattern resultPattern = Pattern.compile("Result of this notice\\s+(\\S+ \\S+)");
 				Matcher resultMatcher = resultPattern.matcher(pdfText);
 				if (resultMatcher.find()) {

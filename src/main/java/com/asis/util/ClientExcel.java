@@ -75,7 +75,9 @@ public class ClientExcel extends MainClass{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//		System.out.println(firstColumnData);
+		firstColumnData.remove(0);
+		System.out.println("First colm data " + firstColumnData.size());
+		
 		return firstColumnData;
 	} 
 
@@ -83,12 +85,12 @@ public class ClientExcel extends MainClass{
 
 	public static void clientNamesRemoval() {
 		String filePath = "ClientData.xls"; 
-		ArrayList<String> firstColumn = readFirstColumn(filePath); 
+		firstColumn = readFirstColumn(filePath); 
 
 		for (int cnt = 0; cnt < firstColumn.size(); cnt++) {
 			String clientName = firstColumn.get(cnt).trim(); 
 
-			if (cnt > 0) {
+			if (cnt >= 0) {
 				int length = clientName.length();
 				if (length > 2 && clientName.charAt(length - 2) == ' ' 
 						&& Character.isLetter(clientName.charAt(length - 1))) {
@@ -96,10 +98,16 @@ public class ClientExcel extends MainClass{
 				}
 				clientName = formatCommaSeparatedName(clientName);
 				clientName = capitalizeName(clientName);
-				//	            System.out.println(clientName);
+				
 				clientNames.add(clientName); 
+				
 			}
+			
 		}
+//		clientNames.remove(0);
+		System.out.println("First colm " + firstColumn.size());
+		System.out.println("Client name size" + clientNames.size());
+//		clientNames.remove(0);
 	}
 
 	/*====================Formating of the client name data===================================*/
@@ -220,7 +228,8 @@ public class ClientExcel extends MainClass{
 			e.printStackTrace();
 		}
 		subjectColumnData.remove(0); 
-		//		System.out.println(subjectColumnData);
+		System.out.println("Subject colm " + subjectColumnData.size());
+//		subjectColumnData.remove(0); 
 		return subjectColumnData;
 	}
 
@@ -265,7 +274,6 @@ public class ClientExcel extends MainClass{
 		}
 
 		fileNamesColumn7.remove(0);	    
-		//		System.out.println(fileNamesColumn7);
 		return fileNamesColumn7;
 	}
 
@@ -274,10 +282,9 @@ public class ClientExcel extends MainClass{
 
 	public static void renamePdfFilesInDownloads(String downloadDir) {
 		ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
-		ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath); // Assuming column 7 is used for renaming
+		ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath); 
 
 		if (pdfFileNames.size() != fileNamesColumn7.size()) {
-			//			System.out.println("Mismatch between column 8 and column 7 sizes.");
 			return;
 		}
 
@@ -345,7 +352,6 @@ public class ClientExcel extends MainClass{
 			e.printStackTrace();
 		}
 		pdfFileNames.remove(0);
-		//		System.out.println(pdfFileNames);
 
 		return pdfFileNames;
 	}
@@ -365,7 +371,6 @@ public class ClientExcel extends MainClass{
 				String correspondingValue = ClientExcel.readPdfFileNamesFromColumn8(filePath).get(i+1).trim();
 
 				String cellFromColumn0 = firstColumnData.get(i).trim();
-				//				System.out.println("Corresponding value from column 0: " + cellFromColumn0);
 
 				searchPdfFilesInDownloads1(filePath, downloadDir, correspondingValue);
 
@@ -374,7 +379,6 @@ public class ClientExcel extends MainClass{
 		}
 
 		if (!found) {
-			//			System.out.println("No 'Notice of Assessment' found in the subject column.");
 		}
 	}
 
@@ -385,16 +389,13 @@ public class ClientExcel extends MainClass{
 
 		File pdfFile = new File(fullPath);
 		if (pdfFile.exists()) {
-			//	        System.out.println("Found: " + pdfFileName);
 			readPdfFile(fullPath);
 		} else {
 			System.out.println("Not Found: " + pdfFileName);
 		}
 	}
 
-
 	/*====================Read PDF from Downloads===================================*/
-
 
 	public static void readPdfFile(String pdfFilePath) {
 		File pdfFile = new File(pdfFilePath);
@@ -406,11 +407,9 @@ public class ClientExcel extends MainClass{
 			if (!document.isEncrypted()) {
 				PDFTextStripper pdfStripper = new PDFTextStripper();
 				String pdfText = pdfStripper.getText(document);
-				//	            System.out.println("Content of the PDF:\n" + pdfText);
 
 				HashMap<String, String> extractedData = new HashMap<>();
 
-				// Extract Date of Issue
 				Pattern datePattern = Pattern.compile("Date of issue\\s*(\\d{2} \\w+ \\d{4})");
 				Matcher dateMatcher = datePattern.matcher(pdfText);
 				if (dateMatcher.find()) {
@@ -418,7 +417,6 @@ public class ClientExcel extends MainClass{
 					extractedData.put("Date of Issue", dateOfIssue);
 				}
 
-				// Extract Reference Number
 				Pattern refPattern = Pattern.compile("Our reference\\s*(\\d{3} \\d{3} \\d{3} \\d{4})");
 				Matcher refMatcher = refPattern.matcher(pdfText);
 				if (refMatcher.find()) {
@@ -426,7 +424,6 @@ public class ClientExcel extends MainClass{
 					extractedData.put("Reference Number", referenceNumber);
 				}
 
-				// Extract Taxable Income
 				Pattern incomePattern = Pattern.compile("Your taxable income is \\$([\\d,]+)");
 				Matcher incomeMatcher = incomePattern.matcher(pdfText);
 				if (incomeMatcher.find()) {
@@ -434,7 +431,6 @@ public class ClientExcel extends MainClass{
 					extractedData.put("Taxable Income", taxableIncome);
 				}
 
-				// Extract Result of the Notice
 				Pattern resultPattern = Pattern.compile("Result of this notice\\s+(\\S+ \\S+)");
 				Matcher resultMatcher = resultPattern.matcher(pdfText);
 				if (resultMatcher.find()) {
@@ -457,7 +453,8 @@ public class ClientExcel extends MainClass{
 	/*====================Main Method===================================*/
 
 	public static void main(String[] args) {
-		//		readSubjectColumn(filePath);
+//				readSubjectColumn(filePath);
+				clientNamesRemoval();
 		//				readFileNamesFromColumn7(filePath);
 		//		checkNoticeOfAssessmentAndPrintIndex(filePath);
 		//		readPdfFileNamesFromColumn8(filePath);

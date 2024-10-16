@@ -49,14 +49,14 @@ public class XeroSearchClientPage extends MainClass {
 	public void inputTheClientName() throws InterruptedException {
 		ClientExcel.clientNamesRemoval();
 		ClientExcel.readSubjectColumn(filePath);
+		System.out.println("client names " + clientNames.size());
+		System.out.println("subject data " + subjectColumnData.size());
 		for (int i = 0; i < clientNames.size(); i++){
 			client = clientNames.get(i);
 			subject = subjectColumnData.get(i);
 			Thread.sleep(3000);
-			wait.until(ExpectedConditions.elementToBeClickable(searchButton));
-			searchButton.click();
-			Thread.sleep(2000);
-			wait.until(ExpectedConditions.elementToBeClickable(inputBox));
+//			clickOnSearchButton();
+//			clickOnSearchButton();
 			inputBox.clear();
 			inputBox.sendKeys(client);
 			Thread.sleep(3000);
@@ -100,18 +100,19 @@ public class XeroSearchClientPage extends MainClass {
 					if (emailText != null && clientCodeText != "-") {
 						ClientExcel.addClientData(clientCodeText, emailText);
 						ClientExcel.writeCombinedDataToExcel(clientCodeText, subject);
+						clickOnSearchButton();
 					} else {
 						ClientExcel.addClientData("client code not found", "client email not found");
 						ClientExcel.writeCombinedDataToExcel(clientCodeText, subject);
 						ClientExcel.saveExcelFile();
+						clickOnSearchButton();
 					}
 				} else {
 					Thread.sleep(3000);
 					ClientExcel.addClientData("client name not found", "client name not found");
 					ClientExcel.writeCombinedDataToExcel(clientCodeText, subject);
 					ClientExcel.saveExcelFile();
-					wait.until(ExpectedConditions.elementToBeClickable(searchButton));
-					searchButton.click();
+					
 				}
 
 			} catch (Exception e) {
