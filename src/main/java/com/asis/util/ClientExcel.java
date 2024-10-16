@@ -54,6 +54,7 @@ public class ClientExcel extends MainClass{
 				cell.setCellValue(cellData);
 			}
 		}
+		saveExcelFile();
 		return data;
 	}
 	/*====================Read Of First Column===================================*/
@@ -309,6 +310,7 @@ public class ClientExcel extends MainClass{
 				System.out.println("File not found: " + pdfFileName);
 			}
 		}
+		
 	}
 
 	/*====================Check the Extension===================================*/
