@@ -18,186 +18,202 @@ import com.asis.util.MainClass;
 import Driver_manager.DriverManager;
 
 public class XeroSearchClientPage extends MainClass {
-	public static String client;
-	public static String subject;
-	public String emailText = null;
-	public String clientCodeText = null;
+    public static String client;
+    public static String subject;
+    public String emailText = null;
+    public String clientCodeText = null;
 
-	@FindBy(xpath = "//button[@title='GlobalSearch']//div[@role='presentation']//*[name()='svg']")
-	WebElement searchButton;
+    @FindBy(xpath = "//button[@title='GlobalSearch']//div[@role='presentation']//*[name()='svg']")
+    WebElement searchButton;
 
-	@FindBy(xpath = "//input[@placeholder='Search']")
-	WebElement inputBox;
+    @FindBy(xpath = "//input[@placeholder='Search']")
+    WebElement inputBox;
 
-	@FindBy(xpath = "//div[@class='form-item']//div[contains(text(), 'Client Code')]/following-sibling::div")
-	WebElement clientCode;
+    @FindBy(xpath = "//div[@class='form-item']//div[contains(text(), 'Client Code')]/following-sibling::div")
+    WebElement clientCode;
 
-	@FindBy(xpath = "//div[@class='panel-item']//span[contains(text(), 'Email')]/following-sibling::span/a")
-	WebElement clientEmail;
+    @FindBy(xpath = "//div[@class='panel-item']//span[contains(text(), 'Email')]/following-sibling::span/a")
+    WebElement clientEmail;
 
-	@FindBy(xpath = "//span[@class='value u-email']")
-	WebElement clientEmail2;
+    @FindBy(xpath = "//span[@class='value u-email']")
+    WebElement clientEmail2;
 
-	public XeroSearchClientPage() {
-		PageFactory.initElements(DriverManager.getDriver(), this);
-	}
+    public XeroSearchClientPage() {
+        PageFactory.initElements(DriverManager.getDriver(), this);
+    }
 
-	public void clickOnSearchButton() {
-		searchButton.click();
-	}
+    public void clickOnSearchButton() {
+        searchButton.click();
+    }
 
-	public void inputTheClientName() throws InterruptedException {
-		System.out.println("client names " + clientNames.size());
-//		ClientExcel.clientNamesRemoval();
-		ClientExcel.readSubjectColumn(filePath);
-		System.out.println("client names " + clientNames.size());
-		System.out.println("subject data " + subjectColumnData.size());
-		for (int i = 0; i < clientNames.size(); i++){
-			client = clientNames.get(i);
-			subject = subjectColumnData.get(i);
-			Thread.sleep(3000);
-//			clickOnSearchButton();
-//			clickOnSearchButton();
-			inputBox.clear();
-			inputBox.sendKeys(client);
-			Thread.sleep(3000);
+    public void inputTheClientName() throws InterruptedException {
+        System.out.println("client names " + clientNames.size());
+        ClientExcel.readSubjectColumn(filePath);
+        System.out.println("client names " + clientNames.size());
+        System.out.println("subject data " + subjectColumnData.size());
 
-			try {
-				List<WebElement> elements = DriverManager.getDriver().findElements(By.xpath("//a"));
-				boolean clientFound = false;
-				for (WebElement ele : elements) {
-					if (ele.getText().trim().equalsIgnoreCase(client.trim())) {
-						ele.click();
-						clientFound = true;
-						break;
-					}
-				}
-				if (clientFound) {
-					try {
-						wait.until(ExpectedConditions.visibilityOf(clientEmail));
-					} catch (Exception e1) {
-						try {
-							wait.until(ExpectedConditions.visibilityOf(clientEmail2));
-						} catch (Exception e2) {
-						}
-					}
-					wait.until(ExpectedConditions.visibilityOf(clientCode));
+        for (int i = 0; i < clientNames.size(); i++) {
+            client = clientNames.get(i);
+            subject = subjectColumnData.get(i);
+            Thread.sleep(3000);
 
-					String emailText = null;
-					String clientCodeText = null;
+            inputBox.clear();
+            inputBox.sendKeys(client);
+            Thread.sleep(3000);
 
-					try {
-						emailText = clientEmail.getText().trim();
-					} catch (Exception e1) {
-						try {
-							emailText = clientEmail2.getText().trim();
-						} catch (Exception e2) {
-						}
-					}
+            try {
+                List<WebElement> elements = DriverManager.getDriver().findElements(By.xpath("//a"));
+                boolean clientFound = false;
 
-					if (clientCode.isDisplayed()) {
-						clientCodeText = clientCode.getText().trim();
-					}
-					if (emailText != null && clientCodeText != "-") {
-						ClientExcel.addClientData(clientCodeText, emailText);
-						ClientExcel.writeCombinedDataToExcel(clientCodeText, subject);
-						clickOnSearchButton();
-					} else {
-						ClientExcel.addClientData("client code not found", "client email not found");
-						ClientExcel.writeCombinedDataToExcel(clientCodeText, subject);
-						ClientExcel.saveExcelFile();
-						clickOnSearchButton();
-					}
-				} else {
-					Thread.sleep(3000);
-					ClientExcel.addClientData("client name not found", "client name not found");
-					ClientExcel.writeCombinedDataToExcel(clientCodeText, subject);
-					ClientExcel.saveExcelFile();
-					
-				}
+                for (WebElement ele : elements) {
+                    if (ele.getText().trim().equalsIgnoreCase(client.trim())) {
+                        ele.click();
+                        clientFound = true;
+                        break;
+                    }
+                }
+                if (!clientFound && client.contains(".")) {
+                    String clientWithoutDot = client.replace(".", "").trim();
+                    inputBox.clear();
+                    inputBox.sendKeys(clientWithoutDot);
+                    Thread.sleep(3000);
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+                    elements = DriverManager.getDriver().findElements(By.xpath("//a"));
+                    for (WebElement ele : elements) {
+                        if (ele.getText().trim().equalsIgnoreCase(clientWithoutDot)) {
+                            ele.click();
+                            clientFound = true;
+                            break;
+                        }
+                    }
+                }
 
-	public void renameAndMovePdfFilesToDownloadsFolder(String downloadDir) {
-	    ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
-	    ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath);
+                if (clientFound) {
+                    try {
+                        wait.until(ExpectedConditions.visibilityOf(clientEmail));
+                    } catch (Exception e1) {
+                        try {
+                            wait.until(ExpectedConditions.visibilityOf(clientEmail2));
+                        } catch (Exception e2) {
+                        }
+                    }
+                    wait.until(ExpectedConditions.visibilityOf(clientCode));
 
-	    if (pdfFileNames.size() != fileNamesColumn7.size()) {
-	        System.out.println("Mismatch between column 8 and column 7 sizes.");
-	        return;
-	    }
+                    String emailText = null;
+                    String clientCodeText = null;
 
-	    File downloadsFolder = new File(downloadDir + File.separator + "Downloads");
-	    if (!downloadsFolder.exists()) {
-	        boolean created = downloadsFolder.mkdir();
-	        if (created) {
-	            System.out.println("Downloads folder created.");
-	        } else {
-	            System.out.println("Failed to create Downloads folder.");
-	            return;
-	        }
-	    }
+                    try {
+                        emailText = clientEmail.getText().trim();
+                    } catch (Exception e1) {
+                        try {
+                            emailText = clientEmail2.getText().trim();
+                        } catch (Exception e2) {
+                        }
+                    }
 
-	    int cnt = 0;
-	    for (String pdfFileName : pdfFileNames) {
-	        String fullPath = downloadDir + File.separator + pdfFileName.trim();
-	        File pdfFile = new File(fullPath);
+                    if (clientCode.isDisplayed()) {
+                        clientCodeText = clientCode.getText().trim();
+                    }
 
-	        if (pdfFile.exists()) {
-	            System.out.println("Found: " + pdfFileName);
+                    if (emailText != null && clientCodeText != "-") {
+                        ClientExcel.addClientData(clientCodeText, emailText);
+                        ClientExcel.writeCombinedDataToExcel(clientCodeText, subject);
+                        clickOnSearchButton();
+                    } else {
+                        ClientExcel.addClientData("client code not found", "client email not found");
+                        ClientExcel.writeCombinedDataToExcel(clientCodeText, subject);
+                        ClientExcel.saveExcelFile();
+                        clickOnSearchButton();
+                    }
+                } else {
+                    Thread.sleep(3000);
+                    ClientExcel.addClientData("client name not found", "client name not found");
+                    ClientExcel.writeCombinedDataToExcel(clientCodeText, subject);
+                    ClientExcel.saveExcelFile();
+                }
 
-	            String currentExtension = getFileExtension(pdfFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	            if (cnt < fileNamesColumn7.size()) {
-	                String newFileName = fileNamesColumn7.get(cnt) + "." + currentExtension;
-	                String newFilePath = downloadDir + File.separator + newFileName;
-	                File renamedFile = new File(newFilePath);
+    public void renameAndMovePdfFilesToDownloadsFolder(String downloadDir) {
+        ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
+        ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath);
 
-	                int fileCount = 1; 
-	                while (renamedFile.exists()) {
-	                    newFileName = "new_" + fileNamesColumn7.get(cnt) + "_" + fileCount + "." + currentExtension;
-	                    renamedFile = new File(downloadDir + File.separator + newFileName);
-	                    fileCount++;
-	                }
+        if (pdfFileNames.size() != fileNamesColumn7.size()) {
+            System.out.println("Mismatch between column 8 and column 7 sizes.");
+            return;
+        }
 
-	                System.out.println("Renaming file to: " + newFileName);
+        File downloadsFolder = new File(downloadDir + File.separator + "Downloads");
+        if (!downloadsFolder.exists()) {
+            boolean created = downloadsFolder.mkdir();
+            if (created) {
+                System.out.println("Downloads folder created.");
+            } else {
+                System.out.println("Failed to create Downloads folder.");
+                return;
+            }
+        }
 
-	                if (pdfFile.renameTo(renamedFile)) {
-	                    System.out.println("Renamed " + pdfFileName + " to " + newFileName);
+        int cnt = 0;
+        for (String pdfFileName : pdfFileNames) {
+            String fullPath = downloadDir + File.separator + pdfFileName.trim();
+            File pdfFile = new File(fullPath);
 
-	                    File targetFile = new File(downloadsFolder + File.separator + newFileName);
-	                    try {
-	                        Files.move(renamedFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-	                        System.out.println("Moved " + newFileName + " to Downloads folder.");
-	                    } catch (IOException e) {
-	                        System.out.println("Failed to move " + newFileName + " to Downloads folder.");
-	                        e.printStackTrace();
-	                    }
-	                } else {
-	                    System.out.println("Failed to rename " + pdfFileName);
-	                }
-	                cnt++;
-	            } else {
-	                System.out.println("Index out of bounds for fileNamesColumn7.");
-	                break;
-	            }
-	        } else {
-	            System.out.println("File not found: " + pdfFileName);
-	        }
-	    }
-	}
+            if (pdfFile.exists()) {
+                System.out.println("Found: " + pdfFileName);
 
-	private String getFileExtension(File file) {
-		String fileName = file.getName();
-		int dotIndex = fileName.lastIndexOf('.');
-		if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
-			return fileName.substring(dotIndex + 1);
-		} else {
-			return "";
-		}
-	}
+                String currentExtension = getFileExtension(pdfFile);
+
+                if (cnt < fileNamesColumn7.size()) {
+                    String newFileName = fileNamesColumn7.get(cnt) + "." + currentExtension;
+                    String newFilePath = downloadDir + File.separator + newFileName;
+                    File renamedFile = new File(newFilePath);
+
+                    int fileCount = 1; 
+                    while (renamedFile.exists()) {
+                        newFileName = "new_" + fileNamesColumn7.get(cnt) + "_" + fileCount + "." + currentExtension;
+                        renamedFile = new File(downloadDir + File.separator + newFileName);
+                        fileCount++;
+                    }
+
+                    System.out.println("Renaming file to: " + newFileName);
+
+                    if (pdfFile.renameTo(renamedFile)) {
+                        System.out.println("Renamed " + pdfFileName + " to " + newFileName);
+
+                        File targetFile = new File(downloadsFolder + File.separator + newFileName);
+                        try {
+                            Files.move(renamedFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            System.out.println("Moved " + newFileName + " to Downloads folder.");
+                        } catch (IOException e) {
+                            System.out.println("Failed to move " + newFileName + " to Downloads folder.");
+                            e.printStackTrace();
+                        }
+                    } else {
+                        System.out.println("Failed to rename " + pdfFileName);
+                    }
+                    cnt++;
+                } else {
+                    System.out.println("Index out of bounds for fileNamesColumn7.");
+                    break;
+                }
+            } else {
+                System.out.println("File not found: " + pdfFileName);
+            }
+        }
+    }
+
+    private String getFileExtension(File file) {
+        String fileName = file.getName();
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+            return fileName.substring(dotIndex + 1);
+        } else {
+            return "";
+        }
+    }
 }

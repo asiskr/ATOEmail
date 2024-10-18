@@ -107,7 +107,7 @@ public class TaxReturnPage extends MainClass {
 
 		// Check if the PDF file exists
 		if (pdfFile.exists()) {
-			System.out.println("Found PDF: " + pdfFileName);
+//			System.out.println("Found PDF: " + pdfFileName);
 			HashMap<String, String> extractedData = readPdfFile(fullPath);
 
 			if (extractedData != null && !extractedData.isEmpty()) {
@@ -120,14 +120,14 @@ public class TaxReturnPage extends MainClass {
 				clickPayableRefundableButton(extractedData.get("Result"));
 			}
 		} else {
-			System.out.println("PDF Not Found: " + pdfFileName);
+//			System.out.println("PDF Not Found: " + pdfFileName);
 		}
 	}
 
 
 	public static void processAllNoticesOfAssessment(String filePath, String downloadDir) {
 		ClientExcel.clientNamesRemoval();
-		System.out.println("client name in tax method before " + clientNames.size());
+//		System.out.println("client name in tax method before " + clientNames.size());
 		subjectColumnData = ClientExcel.readSubjectColumn(filePath);
 		boolean found = false; 
 
@@ -138,7 +138,7 @@ public class TaxReturnPage extends MainClass {
 				found = true; 
 
 				String clientName = clientNames.get(i).trim();
-				System.out.println("Processing Client: " + clientName);
+//				System.out.println("Processing Client: " + clientName);
 
 				clickTaxButton();
 				clickReturnsButton();
@@ -159,11 +159,10 @@ public class TaxReturnPage extends MainClass {
 			}
 		}
 		if (!found) {
-			System.out.println("No 'Notice of Assessment' found in the subject column.");
+//			System.out.println("No 'Notice of Assessment' found in the subject column.");
 		}
-		System.out.println("client name in tax method after " + clientNames.size());
+//		System.out.println("client name in tax method after " + clientNames.size());
 //		clientNames.clear();
-		System.out.println("client name in tax method after clearing it " + clientNames.size());
 	}
 
 	
@@ -172,7 +171,7 @@ public class TaxReturnPage extends MainClass {
 		HashMap<String, String> extractedData = new HashMap<>();
 
 		if (pdfFilePath.toLowerCase().endsWith(".html")) {
-			System.out.println("Found HTML file. Skipping: " + pdfFilePath);
+//			System.out.println("Found HTML file. Skipping: " + pdfFilePath);
 			return extractedData;
 		}
 
@@ -220,9 +219,9 @@ public class TaxReturnPage extends MainClass {
 					extractedData.put("Result", "0.0");
 				}
 
-				System.out.println("Extracted Data: " + extractedData);
+//				System.out.println("Extracted Data: " + extractedData);
 			} else {
-				System.out.println("The PDF is encrypted. Cannot read.");
+//				System.out.println("The PDF is encrypted. Cannot read.");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

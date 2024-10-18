@@ -6,6 +6,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.asis.util.MainClass;
 
+import Driver_manager.DriverManager;
+
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.io.File;
@@ -158,5 +160,8 @@ public class SaveEmailDraftGraphAPI extends MainClass{
 		} catch (Exception e) {
 			e.printStackTrace(); 
 		}
+	}
+	public void closeBrowserXero() {
+		DriverManager.getDriver().quit();
 	}
 }
