@@ -31,12 +31,12 @@ public class XeroLoginPage extends MainClass{
 	}
 	public void enterUserId() {
         wait.until(ExpectedConditions.elementToBeClickable(Emailaddress));
-        Emailaddress.sendKeys(XERO_USER_NAME);
+        Emailaddress.sendKeys("accountant2@fortunaadvisors.com.au");
     }
 
     public void enterPassword() {
         wait.until(ExpectedConditions.elementToBeClickable(Password));
-        Password.sendKeys(XERO_PASSWORD);
+        Password.sendKeys("User123456@");
     }
 	public void clickLoginButton() {
 		wait.until(ExpectedConditions.elementToBeClickable(loginButton));

@@ -30,6 +30,7 @@ public class MainClass {
 	public static ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
 	public static ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath);
 
+	/*
 	public static String ATO_USER_NAME="";
 	public static String USERNAME="";
 	public static String SENDER_TO="";
@@ -41,7 +42,7 @@ public class MainClass {
 	public static String XERO_SECURITY_ANS2="";
 	public static String XERO_SECURITY_QUEST3="";
 	public static String XERO_SECURITY_ANS3="";
-
+*/
 	public static ArrayList<ArrayList<String>> ACTIVITY_STATEMENT_DATA = new ArrayList<>();
 	public static ArrayList<ArrayList<String>> ACTIVITY_STATEMENT_DATA2 = new ArrayList<>();
 
@@ -58,6 +59,7 @@ public class MainClass {
 	/*====================Set Properties===================================*/
 
 	public void setProperties() {
+		/*
 		ATO_USER_NAME=System.getProperty("ATO_Id");
 		XERO_USER_NAME=System.getProperty("XERO_Id");
 		XERO_PASSWORD=System.getProperty("XERO_Password");
@@ -67,6 +69,7 @@ public class MainClass {
 		XERO_SECURITY_ANS2=System.getProperty("Security_Answer_2");
 		XERO_SECURITY_QUEST3=System.getProperty("Security_Question_3");
 		XERO_SECURITY_ANS3=System.getProperty("Security_Answer_3");
+		*/
 	}
 
 	/*====================Launch Site===================================*/

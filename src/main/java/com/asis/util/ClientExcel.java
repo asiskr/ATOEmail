@@ -449,19 +449,4 @@ public class ClientExcel extends MainClass{
 			e.printStackTrace();
 		}
 	}
-
-	/*====================Main Method===================================*/
-
-	public static void main(String[] args) {
-//				readSubjectColumn(filePath);
-				clientNamesRemoval();
-		//				readFileNamesFromColumn7(filePath);
-		//		checkNoticeOfAssessmentAndPrintIndex(filePath);
-		//		readPdfFileNamesFromColumn8(filePath);
-
-		//		readSubjectColumn(filePath);
-		//		renamePdfFilesInDownloads(downloadDir);
-		//		readFileNamesFromColumn7(filePath);
-		//		checkNoticeOfAssessment(filePath, downloadDir);
-	}
 }

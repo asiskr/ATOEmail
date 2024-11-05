@@ -56,10 +56,18 @@ public class XeroSearchClientPage extends MainClass {
             client = clientNames.get(i);
             subject = subjectColumnData.get(i);
             Thread.sleep(3000);
+            try {
 
             inputBox.clear();
             inputBox.sendKeys(client);
             Thread.sleep(3000);
+            }
+            catch(Exception e){
+            	clickOnSearchButton();
+            	inputBox.clear();
+                inputBox.sendKeys(client);
+                Thread.sleep(3000);
+            }
 
             try {
                 List<WebElement> elements = DriverManager.getDriver().findElements(By.xpath("//a"));

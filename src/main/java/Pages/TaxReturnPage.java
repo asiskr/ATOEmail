@@ -2,7 +2,6 @@ package Pages;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -153,7 +152,6 @@ public class TaxReturnPage extends MainClass {
 					
 				}
 				catch(Exception e) {
-					String pdfFileName = ClientExcel.readPdfFileNamesFromColumn8(filePath).get(i + 1).trim();
 
 				}
 			}

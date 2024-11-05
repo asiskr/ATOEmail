@@ -9,20 +9,10 @@ import io.cucumber.junit.CucumberOptions;
 @CucumberOptions(
 		features= 
 	{"src/test/resources/Features/"},
-		/*
-	{
-	
-	"src/test/resources/Features/test1_XeroLogin.feature",
-	"src/test/resources/Features/test2_XeroSecurityQuest.feature",
-	"src/test/resources/Features/test3_XeroPractiseMan.feature",
-	"src/test/resources/Features/test5_XeroTaxReturn.feature",
-//	"src/test/resources/Features/5test_ATOFetchingICAStatement.feature",
-	},
-	*/
+
 	glue={"StepDefinition","MyHooks"},
 	plugin = {"pretty"}
 		)
 
 public class TestRunner { 
-	//Leca, Christopher
 }

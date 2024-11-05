@@ -33,7 +33,7 @@ public class ATOSelectingDatePage extends MainClass{
 	@FindBy(xpath="//option[contains(text(),'100')]")
 	private WebElement pages100;
     LocalDate currentDate = LocalDate.now();
-    LocalDate previousDate = currentDate.minusDays(1);
+    LocalDate previousDate = currentDate.minusDays(11);
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     String formattedDate = previousDate.format(formatter);
 	
@@ -61,13 +61,14 @@ public class ATOSelectingDatePage extends MainClass{
 	public void clickSearchButton() {
 		wait.until(ExpectedConditions.elementToBeClickable(search));
 		search.click();
+		try {
 		wait.until(ExpectedConditions.elementToBeClickable(resultPerPage));
 		resultPerPage.click();
 		wait.until(ExpectedConditions.elementToBeClickable(pages100));
 		pages100.click();
-	}
-	public void clickPageSearchButton() {
-		wait.until(ExpectedConditions.elementToBeClickable(resultPerPage));
-		resultPerPage.click();
+		}
+		catch(Exception e) {
+			
+		}
 	}
 }

@@ -29,7 +29,7 @@ public class ATOLoginPage extends MainClass{
 
 	public void sendingEmailAddress() {
 		wait.until(ExpectedConditions.elementToBeClickable(emailAddress));
-		emailAddress.sendKeys(ATO_USER_NAME);
+		emailAddress.sendKeys("divya@fortunaadvisors.com.au");
 	}
 
 	public void clickOnLoginButton() throws InterruptedException {
