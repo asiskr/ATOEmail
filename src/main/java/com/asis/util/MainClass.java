@@ -1,5 +1,6 @@
 package com.asis.util;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +12,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import Driver_manager.DriverManager;
 
 public class MainClass {
+	
 	public WebDriver driver;
 	
-	public static String downloadDir = "C:\\Users\\test\\Downloads";
+	public static String downloadDir = System.getProperty("user.home") + File.separator + "Downloads";
 	
 	public static String newFilePath ;
 
@@ -30,19 +32,6 @@ public class MainClass {
 	public static ArrayList<String> pdfFileNames = ClientExcel.readPdfFileNamesFromColumn8(filePath);
 	public static ArrayList<String> fileNamesColumn7 = ClientExcel.readFileNamesFromColumn7(filePath);
 
-	/*
-	public static String ATO_USER_NAME="";
-	public static String USERNAME="";
-	public static String SENDER_TO="";
-	public static String XERO_USER_NAME="";
-	public static String XERO_PASSWORD="";
-	public static String XERO_SECURITY_QUEST1="";
-	public static String XERO_SECURITY_ANS1="";
-	public static String XERO_SECURITY_QUEST2="";
-	public static String XERO_SECURITY_ANS2="";
-	public static String XERO_SECURITY_QUEST3="";
-	public static String XERO_SECURITY_ANS3="";
-*/
 	public static ArrayList<ArrayList<String>> ACTIVITY_STATEMENT_DATA = new ArrayList<>();
 	public static ArrayList<ArrayList<String>> ACTIVITY_STATEMENT_DATA2 = new ArrayList<>();
 
@@ -87,4 +76,5 @@ public class MainClass {
 	public void tearDown() {
 		DriverManager.getDriver().quit();
 	}	
+	
 }
