@@ -11,7 +11,7 @@ import io.cucumber.junit.CucumberOptions;
 	{"src/test/resources/Features/"},
 
 	glue={"StepDefinition","MyHooks"},
-	plugin = {"pretty"}
+	plugin = {"pretty"} 
 		)
 
 public class TestRunner { 

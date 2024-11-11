@@ -1,5 +1,7 @@
 package Pages;
 
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -10,8 +12,10 @@ import com.asis.util.MainClass;
 import Driver_manager.DriverManager;
 
 public class ATOLoginPage extends MainClass{	
-	
-	@FindBy(xpath="//a[@id='btn-myGovID']")
+
+	private byte[] screenshotBytes;
+
+	@FindBy(xpath="//span[contains(text(),'Continue with Digital ID')]")
 	private WebElement myGOV;
 	@FindBy(xpath= "//input[@type='email']")
 	private WebElement emailAddress;
@@ -23,7 +27,7 @@ public class ATOLoginPage extends MainClass{
 	}
 
 	public void clickOnMyGOVButton() throws InterruptedException {
-//		Thread.sleep(10000);
+		//		Thread.sleep(10000);
 		myGOV.click();
 	}
 
@@ -32,9 +36,11 @@ public class ATOLoginPage extends MainClass{
 		emailAddress.sendKeys("divya@fortunaadvisors.com.au");
 	}
 
-	public void clickOnLoginButton() throws InterruptedException {
+	public byte[] clickOnLoginButton() throws InterruptedException {
 		wait.until(ExpectedConditions.elementToBeClickable(loginButton));
 		loginButton.click();
 		Thread.sleep(3000);
+		screenshotBytes = ((TakesScreenshot)DriverManager.getDriver()).getScreenshotAs(OutputType.BYTES);
+		return screenshotBytes;
 	}
 }
