@@ -80,6 +80,7 @@ public class ATOcommHistoryExtarctionPage extends MainClass {
 	}
 	public void printLatestDownloadedFileName(String downloadDir) {
 		File dir = new File(downloadDir);
+		
 		File[] files = dir.listFiles();
 
 		if (files != null && files.length > 0) {
